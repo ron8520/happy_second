@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:happy_second/componets/product_card.dart';
+import 'package:happy_second/routes/category.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,6 +26,16 @@ class _HomePageState extends State<HomePage> {
     ProductCard(),
     ProductCard(),
   ];
+
+  void _handleMoveCategoryPage(String title){
+    Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => CategoryPage(
+            title: title,
+          ),
+        )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +104,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               GestureDetector(
                 onTap: () {
-                  print("go to toys");
+                  _handleMoveCategoryPage("Toys");
                 },
                 child: Container(
                   height: 180,
@@ -140,7 +151,7 @@ class _HomePageState extends State<HomePage> {
               ),
               GestureDetector(
                   onTap: () {
-                    print("Go to Clothes");
+                    _handleMoveCategoryPage("Clothes");
                   },
                   child: Container(
                     height: 180,

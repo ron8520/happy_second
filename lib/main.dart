@@ -57,7 +57,7 @@ class _MainPageState extends State<MainPage> {
                   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                   child: CircleAvatar(
                     child: Icon(Icons.person, color: Colors.white),
-                    backgroundColor: Colors.grey,
+                    backgroundColor: Colors.black12,
                   ))
             ]),
         body: _pageRouting[index],
