@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:happy_second/componets/product_card.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,11 +18,22 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
+  final items = [
+    ProductCard(),
+    ProductCard(),
+    ProductCard(),
+    ProductCard(),
+    ProductCard(),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return SingleChildScrollView(
+        child: Column(
       children: [
-        Flexible(
+        Container(
+            height:
+                MediaQuery.of(context).size.height * 0.2, // Set a fixed height
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: ClipRRect(
@@ -100,10 +112,9 @@ class _HomePageState extends State<HomePage> {
                             child: Padding(
                               padding: EdgeInsets.all(16.0),
                               child: Image(
-                                height: 140,
-                                width: 140,
-                                image: AssetImage("lib/assets/duck.png")
-                              ),
+                                  height: 140,
+                                  width: 140,
+                                  image: AssetImage("lib/assets/duck.png")),
                             ),
                           )),
                       Positioned(
@@ -150,8 +161,8 @@ class _HomePageState extends State<HomePage> {
                                 child: Image(
                                     height: 140,
                                     width: 160,
-                                    image: AssetImage("lib/assets/clothes.png")
-                                ),
+                                    image:
+                                        AssetImage("lib/assets/clothes.png")),
                               ),
                             )),
                         Positioned(
@@ -191,10 +202,24 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             )),
-        SizedBox(
-          height: 250,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Number of items per row
+              crossAxisSpacing: 10.0,
+              mainAxisSpacing: 10.0,
+              childAspectRatio: 0.8
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return items[index];
+            },
+          )
         )
       ],
-    );
+    ));
   }
 }

@@ -73,6 +73,7 @@ flutter:
      - lib/assets/logo.jpg
      - lib/assets/duck.png
      - lib/assets/clothes.png
+     - lib/assets/shanyi.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
