@@ -15,7 +15,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: ThemeData(
+          textSelectionTheme: TextSelectionThemeData( cursorColor: HexColor.fromHex("#5E7737"))
+
+      ),
         debugShowCheckedModeBanner: false, home: MainPage());
   }
 }
@@ -29,6 +33,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int index = 0;
+  static final TextEditingController _searchController = TextEditingController();
+
   final _pageRouting = const <Widget>[
     HomePage(),
     SearchPage(),
@@ -39,11 +45,23 @@ class _MainPageState extends State<MainPage> {
   final _title = <Widget>[
     const Image(
         width: 70, height: 70, image: AssetImage("lib/assets/logo.jpg")),
-    Text("Search",
-        style: TextStyle(
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            color: HexColor.fromHex("#5E7737"))),
+    Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.grey[200]
+      ),
+      child: TextField(
+        controller: _searchController,
+        decoration: InputDecoration(
+          hintText: "Search...",
+          prefixIcon: Icon(Icons.search, color: HexColor.fromHex("#5E7737")),
+          border: InputBorder.none,
+          focusColor: HexColor.fromHex("#5E7737"),
+          iconColor: HexColor.fromHex("#5E7737"),
+          hintStyle: TextStyle(color: Colors.grey),
+        ),
+      ),
+    ),
     Text("Cart",
         style: TextStyle(
             fontSize: 20.0,

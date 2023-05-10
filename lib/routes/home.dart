@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:happy_second/componets/product_card.dart';
+import 'package:happy_second/componets/product_list.dart';
 import 'package:happy_second/routes/category.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
@@ -18,14 +18,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
   }
-
-  final items = [
-    ProductCard(),
-    ProductCard(),
-    ProductCard(),
-    ProductCard(),
-    ProductCard(),
-  ];
 
   void _handleMoveCategoryPage(String title){
     Navigator.of(context).push(
@@ -215,20 +207,7 @@ class _HomePageState extends State<HomePage> {
             )),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: items.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Number of items per row
-              crossAxisSpacing: 10.0,
-              mainAxisSpacing: 10.0,
-              childAspectRatio: 0.8
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return items[index];
-            },
-          )
+          child: ProductList()
         )
       ],
     ));
