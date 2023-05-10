@@ -77,7 +77,7 @@ class _MainPageState extends State<MainPage> {
             print("Delete all");
           },
         )),
-    SizedBox()
+    const SizedBox()
   ];
 
   @override
@@ -105,22 +105,26 @@ class _MainPageState extends State<MainPage> {
               index = x;
             });
           },
-          items: const <BottomNavigationBarItem>[
+          items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: 'Home',
+              backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
               label: 'Search',
+              backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart),
               label: 'Cart',
+              backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: 'Account',
+              backgroundColor: Colors.grey[200],
             ),
           ],
         ));
