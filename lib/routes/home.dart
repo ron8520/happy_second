@@ -22,9 +22,8 @@ class _HomePageState extends State<HomePage> {
     return Column(
       children: [
         Flexible(
-            flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: PageView(
@@ -62,33 +61,138 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Category",
+                  style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: HexColor.fromHex("#5E7737")),
+                ),
+              ],
+            )),
+        Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                height: 180,
-                width: 180,
-                child: Text("Toys"),
-                decoration: BoxDecoration(
-                  color: HexColor.fromHex("#F4D2B1"),
-                  borderRadius: BorderRadius.circular(20.0),
+              GestureDetector(
+                onTap: () {
+                  print("go to toys");
+                },
+                child: Container(
+                  height: 180,
+                  width: 180,
+                  decoration: BoxDecoration(
+                    color: HexColor.fromHex("#F4D2B1"),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Stack(
+                    children: const [
+                      Positioned(
+                          top: 0.0,
+                          left: 0.0,
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Image(
+                                height: 140,
+                                width: 140,
+                                image: AssetImage("lib/assets/duck.png")
+                              ),
+                            ),
+                          )),
+                      Positioned(
+                          bottom: 0.0,
+                          right: 0.0,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text(
+                                'Toys',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                height: 180,
-                width: 180,
-                child: Text("Clothes"),
-                decoration: BoxDecoration(
-                  color: HexColor.fromHex("#9BBBFF"),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-              )
+              GestureDetector(
+                  onTap: () {
+                    print("Go to Clothes");
+                  },
+                  child: Container(
+                    height: 180,
+                    width: 180,
+                    decoration: BoxDecoration(
+                      color: HexColor.fromHex("#9BBBFF"),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Stack(
+                      children: const [
+                        Positioned(
+                            top: 0.0,
+                            left: 0.0,
+                            child: Align(
+                              alignment: Alignment.topLeft,
+                              child: Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: Image(
+                                    height: 140,
+                                    width: 160,
+                                    image: AssetImage("lib/assets/clothes.png")
+                                ),
+                              ),
+                            )),
+                        Positioned(
+                            bottom: 0.0,
+                            right: 0.0,
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child: Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Text(
+                                  'Clothes',
+                                  style: TextStyle(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  ))
             ],
           ),
         ),
+        Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Newest Products",
+                  style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                      color: HexColor.fromHex("#5E7737")),
+                ),
+              ],
+            )),
         SizedBox(
-          height: 200,
+          height: 250,
         )
       ],
     );
