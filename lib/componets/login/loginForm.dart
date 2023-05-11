@@ -161,7 +161,7 @@ class _LoginFormState extends State<LoginForm> {
             TextSpan(
               children: [
                 TextSpan(
-                  text: 'Doesn’t have account? Sign up now',
+                  text: 'Does’t have account? Sign up now',
                   style: TextStyle(
                     decoration: TextDecoration.underline,
                     color: HexColor.fromHex("#5E7737"),
