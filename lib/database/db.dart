@@ -1,25 +1,29 @@
-
 import 'dart:io';
 import 'dart:convert';
 import "package:collection/collection.dart";
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 
-import 'package:flutter/material.dart' hide Table;
+import 'package:flutter/material.dart' hide Table, Column;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
+import '../model/user.dart';
+
 part 'db.g.dart';
 
-
-@DataClassName('User')
+@DataClassName('UsersDB')
 class Users extends Table {
   TextColumn get uuid => text().withLength(min: 36, max: 36)();
 
-  TextColumn get username => text().withLength(min: 36, max: 36)();
+  TextColumn get username => text().withLength(min: 0, max: 36)();
 
-  TextColumn get emailAddress => text().withLength(min: 36, max: 36)();
+  TextColumn get emailAddress => text().withLength(min: 0, max: 36)();
 
+  TextColumn get password => text()();
+
+  @override
+  Set<Column> get primaryKey => {uuid};
 }
 
 LazyDatabase _openConnection() {
@@ -58,5 +62,32 @@ class AppDatabase extends _$AppDatabase {
       onUpgrade: (Migrator m, int from, int to) async {},
       beforeOpen: (details) async {},
     );
+  }
+
+  Future<void> createUser(UsersCompanion user) async {
+    return transaction(() async {
+      await into(users).insert(user);
+    });
+  }
+
+  Future<User?> findUser(String username) async {
+    try {
+      final user = await (select(users)
+        ..where((item) => item.username.equals(username)))
+          .getSingle();
+      return User.fromDB(user);
+    } catch (e) {
+      return null;
+    }
+  }
+  Future<User?> findUserByEmail(String email) async {
+    try {
+      final user = await (select(users)
+        ..where((item) => item.emailAddress.equals(email)))
+          .getSingle();
+      return User.fromDB(user);
+    } catch (e) {
+      return null;
+    }
   }
 }

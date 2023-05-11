@@ -2,8 +2,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:happy_second/database/db.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:provider/provider.dart';
 
+import '../../model/user.dart';
 import '../../routes/register.dart';
 import '../../utils/storage/sharedPreferences_util.dart';
 
@@ -22,23 +25,33 @@ class _LoginFormState extends State<LoginForm> {
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
 
-  Future<void> _handleLogin() async {
+  Future<bool> _handleLogin() async {
     try {
       String email = _emailController.text;
       String password = _passwordController.text;
-      await SharedPreferencesUtil.setStringItem('email', email);
-      await SharedPreferencesUtil.setStringItem('password', password);
+      final db = Provider.of<AppDatabase>(context, listen: false);
+
+      User? user = await db.findUserByEmail(email);
+      if(user == null){
+        EasyLoading.showInfo("User not found!");
+        return false;
+      }else if (password != user.password){
+        EasyLoading.showInfo("Login information is not correct!");
+        return false;
+      } else {
+        EasyLoading.showSuccess("Login successful!");
+        await SharedPreferencesUtil.setStringItem('email', email);
+        return true;
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       rethrow;
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 
-  String? _validatePhoneNumber(String? value) {
+  String? _validateEmailAddress(String? value) {
     if (value == null || value.isEmpty) {
       return "Email address is invalid";
     }
@@ -68,8 +81,11 @@ class _LoginFormState extends State<LoginForm> {
         'Oops! can not submit.',
       );
     } else {
-      _handleLogin();
-      Navigator.pushNamed(context, "/");
+      _handleLogin().then((value) => {
+        if(value) {
+          Navigator.pushNamed(context, "/")
+        }
+      });
     }
     setState(() {
       _isLoading = false;
@@ -97,7 +113,7 @@ class _LoginFormState extends State<LoginForm> {
               keyboardType: TextInputType.emailAddress,
               controller: _emailController,
               cursorColor: HexColor.fromHex("#5E7737"),
-              validator: _validatePhoneNumber,
+              validator: _validateEmailAddress,
               decoration: InputDecoration(
                   hintText: 'Email',
                   icon: Icon(EvaIcons.phoneOutline,

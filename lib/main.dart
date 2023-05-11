@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/routes/account.dart';
 import 'package:happy_second/routes/cart.dart';
 import 'package:happy_second/routes/filter.dart';
@@ -7,6 +8,9 @@ import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
+import 'package:provider/provider.dart';
+
+import 'database/db.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,15 +28,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        routes: {
-          '/login': (context) => LoginPage()
-        },
-        theme: ThemeData(
-            textSelectionTheme: TextSelectionThemeData(
-                cursorColor: HexColor.fromHex("#5E7737"))),
-        debugShowCheckedModeBanner: false,
-        home: MainPage());
+    return MultiProvider(
+      providers: [
+        Provider<AppDatabase>(
+          create: (context) => AppDatabase(),
+          dispose: (context, db) => db.close(),
+        ),
+      ],
+          child:  MaterialApp(
+              routes: {
+                '/login': (context) => LoginPage()
+              },
+              builder: EasyLoading.init(),
+              theme: ThemeData(
+                  textSelectionTheme: TextSelectionThemeData(
+                      cursorColor: HexColor.fromHex("#5E7737"))),
+              debugShowCheckedModeBanner: false,
+              home: MainPage())
+    );
   }
 }
 

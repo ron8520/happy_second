@@ -1,5 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:happy_second/database/db.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import '../model/user.dart';
 import '../utils/hexColor.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -20,30 +25,58 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _isLoading = false;
 
   Future<void> _handleSubmitted() async {
-    setState(() {
-      _isLoading = true;
-    });
-    final form = _formKey.currentState;
-    if (!form!.validate()) {
-    } else {
-      Navigator.pushNamed(context, "/");
+    try {
+      EasyLoading.show(status: "Loading...");
+      setState(() {
+        _isLoading = true;
+      });
+      final form = _formKey.currentState;
+      if (!form!.validate()) {
+      } else {
+        final db = Provider.of<AppDatabase>(context, listen: false);
+        User newUser = User(
+            uuid: const Uuid().v4(),
+            emailAddress: _emailController.text,
+            username: _usernameController.text,
+            password: _passwordController.text);
+
+        await db.createUser(newUser.toUsersCompanion()).then((value) =>
+            {EasyLoading.dismiss(),Navigator.pushNamed(context, "/login")});
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      rethrow;
+    } finally {
+      EasyLoading.dismiss();
     }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   String? _validateEmailAddress(String? value) {
     if (value == null || value.isEmpty) {
       return "Email address is invalid";
     }
+    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+      return 'Please enter a valid email address.';
+    }
     return null;
   }
 
-  String? _validateUsername(String? value) {
+  String? _validateUsername(BuildContext context, String? value) {
     if (value == null || value.isEmpty) {
-      return "Username already taken";
+      return "Password is invalid";
     }
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    db.findUser(value).then((value) {
+      if (value != null) {
+        return "Username already taken";
+      }
+    });
+
     return null;
   }
 
@@ -56,7 +89,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return "Password is invalid";
+      return "Confirm Password cannot be empty";
+    }
+    if (value != _passwordController.text) {
+      return "Confirm Password is not the same";
     }
     return null;
   }
@@ -103,9 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     children: const [
                       Text(
                         "Create an account",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.0),
+                        style: TextStyle(color: Colors.grey, fontSize: 14.0),
                       ),
                     ],
                   ),
@@ -131,7 +165,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       keyboardType: TextInputType.name,
                       controller: _usernameController,
                       cursorColor: HexColor.fromHex("#5E7737"),
-                      validator: _validateEmailAddress,
+                      validator: (value) => _validateUsername(context, value),
                       decoration: InputDecoration(
                           hintText: 'Username',
                           focusColor: Colors.white,
@@ -178,7 +212,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: IgnorePointer(
                       ignoring: _isLoading,
                       child: ElevatedButton(
-                        onPressed: _handleSubmitted,
+                        onPressed: () => _handleSubmitted(),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: HexColor.fromHex("#5E7737"),
                             foregroundColor: Colors.white,
