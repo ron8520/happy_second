@@ -1,27 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/routes/account.dart';
 import 'package:happy_second/routes/cart.dart';
 import 'package:happy_second/routes/filter.dart';
 import 'package:happy_second/routes/home.dart';
+import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
+import 'package:provider/provider.dart';
+
+import 'database/db.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  realRunApp();
+}
+
+void realRunApp() async {
+  bool success = await SharedPreferencesUtil.getInstance();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-          textSelectionTheme: TextSelectionThemeData( cursorColor: HexColor.fromHex("#5E7737"))
-
-      ),
-        debugShowCheckedModeBanner: false, home: MainPage());
+    return MultiProvider(
+      providers: [
+        Provider<AppDatabase>(
+          create: (context) => AppDatabase(),
+          dispose: (context, db) => db.close(),
+        ),
+      ],
+          child:  MaterialApp(
+              routes: {
+                '/login': (context) => LoginPage()
+              },
+              builder: EasyLoading.init(),
+              theme: ThemeData(
+                  textSelectionTheme: TextSelectionThemeData(
+                      cursorColor: HexColor.fromHex("#5E7737"))),
+              debugShowCheckedModeBanner: false,
+              home: MainPage())
+    );
   }
 }
 
@@ -34,15 +58,22 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int index = 0;
-  static final TextEditingController _searchController = TextEditingController();
+  static final TextEditingController _searchController =
+      TextEditingController();
 
-  final _pageRouting = const <Widget>[
-    HomePage(),
-    SearchPage(),
-    CartPage(),
-    AccountPage()
-  ];
-
+  Widget? callPage() {
+    if (index == 0) {
+      return HomePage();
+    } else if (index == 1) {
+      return SearchPage();
+    } else if (index == 2) {
+      return CartPage();
+    } else if (index == 3) {
+      return AccountPage();
+    } else {
+      return HomePage();
+    }
+  }
 
   @override
   void initState() {
@@ -56,9 +87,7 @@ class _MainPageState extends State<MainPage> {
           width: 70, height: 70, image: AssetImage("lib/assets/logo.jpg")),
       Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: Colors.grey[200]
-        ),
+            borderRadius: BorderRadius.circular(20), color: Colors.grey[200]),
         child: TextField(
           controller: _searchController,
           decoration: InputDecoration(
@@ -92,11 +121,9 @@ class _MainPageState extends State<MainPage> {
             iconSize: 30,
             icon: Icon(Icons.list, color: HexColor.fromHex("#5E7737")),
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const Filter(),
-                  )
-              );
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const Filter(),
+              ));
             },
           )),
       Padding(
@@ -117,17 +144,25 @@ class _MainPageState extends State<MainPage> {
             elevation: index == 3 ? 0.0 : 2.0,
             centerTitle: true,
             title: _title[index],
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             actions: [_action[index]]),
-        body: _pageRouting[index],
+        body: callPage(),
         bottomNavigationBar: BottomNavigationBar(
           selectedItemColor: HexColor.fromHex("#5E7737"),
           unselectedItemColor: Colors.grey[400],
           currentIndex: index,
           onTap: (x) {
-            setState(() {
-              index = x;
-            });
+            if(x == 2 || x == 3){
+                if (SharedPreferencesUtil.preferences.getString("email") == null) {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const LoginPage(),
+                  ));
+                }
+            }
+              setState(() {
+                index = x;
+              });
           },
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
