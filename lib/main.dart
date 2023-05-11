@@ -25,6 +25,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        routes: {
+          '/login': (context) => LoginPage()
+        },
         theme: ThemeData(
             textSelectionTheme: TextSelectionThemeData(
                 cursorColor: HexColor.fromHex("#5E7737"))),
@@ -128,6 +131,7 @@ class _MainPageState extends State<MainPage> {
             elevation: index == 3 ? 0.0 : 2.0,
             centerTitle: true,
             title: _title[index],
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             actions: [_action[index]]),
         body: callPage(),

@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
+import '../../routes/register.dart';
 import '../../utils/storage/sharedPreferences_util.dart';
 
 class LoginForm extends StatefulWidget {
@@ -20,12 +22,12 @@ class _LoginFormState extends State<LoginForm> {
       GlobalKey<ScaffoldMessengerState>();
   bool _isLoading = false;
 
-  Future<void> _handleLogin(String email, String password) async {
+  Future<void> _handleLogin() async {
     try {
+      String email = _emailController.text;
+      String password = _passwordController.text;
       await SharedPreferencesUtil.setStringItem('email', email);
       await SharedPreferencesUtil.setStringItem('password', password);
-
-      return;
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -66,10 +68,12 @@ class _LoginFormState extends State<LoginForm> {
         'Oops! can not submit.',
       );
     } else {
-      setState(() {
-        _isLoading = false;
-      });
+      _handleLogin();
+      Navigator.pushNamed(context, "/");
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -77,12 +81,15 @@ class _LoginFormState extends State<LoginForm> {
     return Form(
         key: _formKey,
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Text("Log In",
+          const Image(
+            image: AssetImage("lib/assets/clothes.png"),
+          ),
+          Text(
+            "Log In",
             style: TextStyle(
-              color: HexColor.fromHex("#5E7737"),
-              fontWeight: FontWeight.bold,
-              fontSize: 32.0
-            ),
+                color: HexColor.fromHex("#5E7737"),
+                fontWeight: FontWeight.bold,
+                fontSize: 32.0),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 15),
@@ -119,7 +126,7 @@ class _LoginFormState extends State<LoginForm> {
           ),
           const SizedBox(height: 20),
           SizedBox(
-            width: MediaQuery.of(context).size.width,
+            width: 360 ,
             child: IgnorePointer(
               ignoring: _isLoading,
               child: ElevatedButton(
@@ -133,6 +140,28 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
           ),
+          const SizedBox(height: 10),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Doesn’t have account? Sign up now',
+                  style: TextStyle(
+                    decoration: TextDecoration.underline,
+                    color: HexColor.fromHex("#5E7737"),
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisterPage()),
+                      );
+                    },
+                ),
+              ],
+            ),
+          )
         ]));
   }
 }
