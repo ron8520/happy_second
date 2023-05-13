@@ -82,6 +82,8 @@ flutter:
      - lib/assets/clothes.png
      - lib/assets/shanyi.png
      - lib/assets/wangzainiunai.jpeg
+     - lib/assets/bank/westpac.png
+     - lib/assets/bank/Mastercard.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

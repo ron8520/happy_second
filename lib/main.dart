@@ -63,15 +63,15 @@ class _MainPageState extends State<MainPage> {
 
   Widget? callPage() {
     if (index == 0) {
-      return HomePage();
+      return const HomePage();
     } else if (index == 1) {
-      return SearchPage();
+      return const SearchPage();
     } else if (index == 2) {
-      return CartPage();
+      return const CartPage();
     } else if (index == 3) {
-      return AccountPage();
+      return const AccountPage();
     } else {
-      return HomePage();
+      return const HomePage();
     }
   }
 
@@ -96,7 +96,7 @@ class _MainPageState extends State<MainPage> {
             border: InputBorder.none,
             focusColor: HexColor.fromHex("#5E7737"),
             iconColor: HexColor.fromHex("#5E7737"),
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
         ),
       ),
@@ -166,22 +166,22 @@ class _MainPageState extends State<MainPage> {
           },
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
+              icon: const Icon(Icons.home),
               label: 'Home',
               backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
               label: 'Search',
               backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
+              icon: const Icon(Icons.shopping_cart),
               label: 'Cart',
               backgroundColor: Colors.grey[200],
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: const Icon(Icons.person),
               label: 'Account',
               backgroundColor: Colors.grey[200],
             ),

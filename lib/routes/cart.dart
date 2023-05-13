@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:happy_second/utils/hexColor.dart';
-import '../componets/dashLine.dart';
 import 'checkout.dart';
 
 class CartPage extends StatefulWidget {
@@ -135,11 +134,17 @@ class _CartPageState extends State<CartPage> {
                     children: [
                       TextSpan(
                         text: '\$${getTotalPrice().toStringAsFixed(2)} ',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       const TextSpan(
                         text: 'AUD',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
                       ),
                     ],
                   ),
@@ -159,11 +164,17 @@ class _CartPageState extends State<CartPage> {
                     children: [
                       TextSpan(
                         text: '\$5.00 ',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       TextSpan(
                         text: 'AUD',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
                       ),
                     ],
                   ),
@@ -185,12 +196,18 @@ class _CartPageState extends State<CartPage> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text:'\$${(getTotalPrice() + 5).toStringAsFixed(2)} ',
-                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                        text: '\$${(getTotalPrice() + 5).toStringAsFixed(2)} ',
+                        style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
                       ),
                       const TextSpan(
                         text: 'AUD',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.normal, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
                       ),
                     ],
                   ),
@@ -210,13 +227,14 @@ class _CartPageState extends State<CartPage> {
                 backgroundColor: HexColor.fromHex("#5E7737"),
                 fixedSize: const Size(400, 30),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20), // Change the value to adjust the radius
+                  borderRadius: BorderRadius.circular(
+                      20), // Change the value to adjust the radius
                 ),
               ),
-              child: const Text('Checkout', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: const Text('Checkout',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(height: 10),
-
           ],
         ));
   }

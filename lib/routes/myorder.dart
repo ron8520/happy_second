@@ -45,9 +45,3 @@ class Order {
 
   Order({required this.id, required this.date, required this.total});
 }
-
-void main() {
-  runApp(MaterialApp(
-    home: OrderHistoryPage(),
-  ));
-}

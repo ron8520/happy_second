@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../componets/checkout/paymentCard.dart';
+import '../utils/hexColor.dart';
 import 'myorder.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -20,7 +22,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         String newPhoneNumber = phoneNumber;
 
         return AlertDialog(
-          title: Text('Edit Address'),
+          title: const Text('Edit Address'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -28,7 +30,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 onChanged: (value) {
                   newPersonName = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Person Name',
                 ),
               ),
@@ -36,7 +38,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 onChanged: (value) {
                   newAddress = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Address',
                 ),
               ),
@@ -44,7 +46,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 onChanged: (value) {
                   newPhoneNumber = value;
                 },
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Phone Number',
                 ),
               ),
@@ -57,8 +59,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               },
               child: Text('Cancel'),
               style: ElevatedButton.styleFrom(
-                primary: Color.fromRGBO(94, 119, 55, 1)
-              ),
+                  primary: Color.fromRGBO(94, 119, 55, 1)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -71,8 +72,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               },
               child: Text('Save'),
               style: ElevatedButton.styleFrom(
-                primary: Color.fromRGBO(94, 119, 55, 1)
-              ),
+                  primary: Color.fromRGBO(94, 119, 55, 1)),
             ),
           ],
         );
@@ -88,93 +88,204 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Checkout'),
+        title: const Text("Checkout",
+            style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(94, 119, 55, 1),
+        backgroundColor: HexColor.fromHex("#5E7737"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-        Row(
-        children: [
-        Expanded(
-        child: GestureDetector(
-          onTap: editAddress,
-          child: Row(
-            children: [
-              Text(
-                'Delivery Address',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: const [
+                Text(
+                  'Delivery Address',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(width: 8.0),
-              Icon(
-                Icons.edit,
-                size: 16.0,
-              ),
-            ],
-          ),
-        ),
-      ),
-      ],
-    ),
-    SizedBox(height: 8.0),
-    Text(
-        personName,
-        style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    Text(
-        address,
-        style: TextStyle(fontSize: 16),
-        ),
-    Text(
-        phoneNumber,
-        style: TextStyle(fontSize: 16),
-        ),
-    SizedBox(height: 16.0),
-    Text(
-        'Payment Details',
-        style: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        ),
-    ),
-    SizedBox(height: 8.0),
-    DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-        labelText: 'Select Card',
-        ),
-              items: <String>['Card 1', 'Card 2', 'Card 3', 'Card 4']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                // Handle card selection
-              },
+              ],
             ),
-            SizedBox(height: 16.0),
-            Text(
+            const SizedBox(height: 10),
+            Container(
+                height: 120,
+                decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(20.0)),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            personName,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: editAddress,
+                              icon: const Icon(Icons.edit))
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          address,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          phoneNumber,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+            const Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                child: Text(
+                  'Payment Details',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )),
+            HorizontalSwipeCard(),
+            const SizedBox(height: 16.0),
+            const Text(
               'Order Summary',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 8.0),
-            Text('Total Price: \$100'),
-            SizedBox(height: 8.0),
-            Text('Delivery Date: May 15, 2023'),
-            SizedBox(height: 16.0),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Subtotal:',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '\$20.0 ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'AUD',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Shipping:',
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
+                ),
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '\$5.00 ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'AUD',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            const Text(
+                "-----------------------------------------------------------"),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [
+                Text(
+                  'Delivery Date:',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                Text('May 15, 2023',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16))
+              ],
+            ),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Total Price: ',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                        text: '\$170.00 ',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'AUD',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 20.0),
             ElevatedButton(
               onPressed: () {
                 // Handle checkout logic here
@@ -183,21 +294,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   MaterialPageRoute(builder: (context) => OrderHistoryPage()),
                 );
               },
-              child: Text('Pay Now'),
               style: ElevatedButton.styleFrom(
-              primary: Color.fromRGBO(94, 119, 55, 1),
-              onPrimary: Colors.white,
-              minimumSize: Size(200, 50),
+                backgroundColor: HexColor.fromHex("#5E7737"),
+                fixedSize: const Size(400, 30),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      20), // Change the value to adjust the radius
+                ),
+              ),
+              child: const Text('Checkout',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
-            )],
+          ],
         ),
       ),
     );
   }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: CheckoutPage(),
-  ));
 }
