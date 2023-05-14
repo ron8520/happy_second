@@ -54,7 +54,7 @@ class _AccountPageState extends State<AccountPage> {
                 fontWeight: FontWeight.bold),
           ),
           onTap: () {
-            print("hello sellers");
+            Navigator.pushNamed(context, '/becomeSeller');
           },
         ),
       ),
@@ -68,7 +68,7 @@ class _AccountPageState extends State<AccountPage> {
               color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
         ),
         onTap: () {
-          print("hello order");
+          Navigator.pushNamed(context, '/myorders');
         },
       )),
       SizedBox(height: 4),

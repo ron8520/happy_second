@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/componets/checkout/paymentSuccess.dart';
 import 'package:happy_second/routes/account.dart';
+import 'package:happy_second/routes/becomeseller.dart';
 import 'package:happy_second/routes/cart.dart';
 import 'package:happy_second/routes/filter.dart';
 import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
+import 'package:happy_second/routes/myorder.dart';
 import 'package:happy_second/routes/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
@@ -40,6 +42,8 @@ class MyApp extends StatelessWidget {
               routes: {
                 '/login': (context) => LoginPage(),
                 '/paymentSuccess': (context) => PaymentSuccessPage(),
+                '/becomeSeller': (context) => SubscribePage(),
+                '/myorders': (context) => OrderHistoryPage(),
               },
               builder: EasyLoading.init(),
               theme: ThemeData(
