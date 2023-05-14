@@ -21,7 +21,7 @@ void main() {
 }
 
 void realRunApp() async {
-  bool success = await SharedPreferencesUtil.getInstance();
+  await SharedPreferencesUtil.getInstance();
   runApp(MyApp());
 }
 
