@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:happy_second/componets/product_list.dart';
+
+import '../componets/product/product_list.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

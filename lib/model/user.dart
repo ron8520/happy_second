@@ -45,8 +45,10 @@ class User {
 class PaymentCard {
   final String number;
   final String cardHolder;
+  bool selected;
 
-  PaymentCard({required this.number, required this.cardHolder});
+
+  PaymentCard({required this.number, required this.cardHolder, this.selected = false});
 
   factory PaymentCard.fromJson(Map<String, dynamic> json) =>
       _$PaymentCardFromJson(json);

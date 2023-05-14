@@ -7,6 +7,7 @@ import 'package:happy_second/routes/cart.dart';
 import 'package:happy_second/routes/filter.dart';
 import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
+import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
 import 'package:happy_second/routes/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
                 '/paymentSuccess': (context) => PaymentSuccessPage(),
                 '/becomeSeller': (context) => SubscribePage(),
                 '/myorders': (context) => OrderHistoryPage(),
+                '/mycards': (context) => CardPage()
               },
               builder: EasyLoading.init(),
               theme: ThemeData(

@@ -9,8 +9,6 @@ class SubscribePage extends StatefulWidget {
 }
 
 class _SubscribePageState extends State<SubscribePage> {
-  String selectedPlan = '';
-
   List<String> plans = ['One Month', 'Three Months', 'Six Months'];
   List<String> details = [
     'Enjoy the full 30 days of subscription for full length. At no additional cost.',
@@ -60,9 +58,9 @@ class _SubscribePageState extends State<SubscribePage> {
             const SizedBox(height: 20.0),
             Expanded(
                 child: SizedBox(
-              height: 460,
+              height: 400,
               child: ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: plans.length,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
@@ -127,7 +125,7 @@ class _SubscribePageState extends State<SubscribePage> {
                                         ),
                                         Text(
                                           '\$${originalPrice[index]}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: Colors.grey,
                                             fontSize: 16,
                                             decoration:
@@ -142,57 +140,57 @@ class _SubscribePageState extends State<SubscribePage> {
                 },
               ),
             )),
-            CheckboxListTile(
-              controlAffinity: ListTileControlAffinity.leading, // This moves the checkbox to the left side of the tile
-              checkColor: Colors.white,
-              activeColor: HexColor.fromHex("#5E7737"),
-              title: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'I Accept the ',
-                      style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.black),
-                    ),
-                    TextSpan(
-                      text: 'Terms of service',
-                      style: TextStyle(
-                          fontSize: 13,
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.normal,
-                          color: HexColor.fromHex("#5E7737")),
-                    ),
-                    TextSpan(
-                      text: ' and ',
-                      style: const TextStyle(
-                          fontSize: 13,
-                          color: Colors.black),
-                    ),
-                    TextSpan(
-                      text: 'Privacy policy',
-                      style: TextStyle(
-                          fontSize: 13,
-                          decoration: TextDecoration.underline,
-                          fontWeight: FontWeight.normal,
-                          color: HexColor.fromHex("#5E7737")),
-                    ),
-                  ],
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(
+                  shape: const CircleBorder(),
+                  activeColor: HexColor.fromHex("#5E7737"),
+                  value: _isChecked,
+                  onChanged: (bool? value) => {
+                    setState(() {
+                      _isChecked = value!;
+                    })
+                  },
                 ),
-              ),
-              value: _isChecked,
-              onChanged: (bool? value) => {
-                setState(() {
-                  _isChecked = value!;
-                })
-              },
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      const TextSpan(
+                        text: 'I Accept the ',
+                        style: TextStyle(fontSize: 13, color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Terms of service',
+                        style: TextStyle(
+                            fontSize: 13,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor.fromHex("#5E7737")),
+                      ),
+                      const TextSpan(
+                        text: ' and ',
+                        style: TextStyle(fontSize: 13, color: Colors.black),
+                      ),
+                      TextSpan(
+                        text: 'Privacy policy',
+                        style: TextStyle(
+                            fontSize: 13,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.normal,
+                            color: HexColor.fromHex("#5E7737")),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             ElevatedButton(
               onPressed: () {
                 // Handle checkout logic here
-                if(_isChecked){
+                if (_isChecked) {
                   Navigator.pushNamed(context, '/paymentSuccess');
-                }else{
+                } else {
                   EasyLoading.showInfo("You have to view our policy first");
                 }
               },
@@ -207,7 +205,7 @@ class _SubscribePageState extends State<SubscribePage> {
               child: const Text('Subscribe Now',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
-            SizedBox(height: 60)
+            const SizedBox(height: 80)
           ],
         ),
       ),

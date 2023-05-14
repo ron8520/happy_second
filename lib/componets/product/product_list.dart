@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:happy_second/componets/product_card.dart';
+import 'package:happy_second/componets/product/product_card.dart';
 
 class ProductList extends StatefulWidget{
   const ProductList({super.key});

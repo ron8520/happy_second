@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:happy_second/componets/checkout/paymentCard.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
+import '../../model/user.dart';
+
 
 class HorizontalSwipeCard extends StatefulWidget {
   @override
@@ -17,11 +19,10 @@ class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
     super.initState();
   }
 
-  final List<Widget> _cards = [
-    PaymentCardView(backgroundColor: HexColor.fromHex('#8DBA37')),
-    PaymentCardView(backgroundColor: HexColor.fromHex('#7D7D7D')),
-    PaymentCardView(backgroundColor: HexColor.fromHex('#9BBBFF')),
-
+  final _cards = [
+    PaymentCard(number: "1234 5678 9012 1233", cardHolder: "Wangzainiunai"),
+    PaymentCard(number: "1234 5678 9012 3211", cardHolder: "Wangzainiunai"),
+    PaymentCard(number: "1234 5678 9012 3333", cardHolder: "Wangzainiunai"),
   ];
 
   @override
@@ -35,7 +36,7 @@ class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
             child: PageView.builder(
               controller: _pageController,
               itemBuilder: (BuildContext context, int index) {
-                return _cards[index % _cards.length];
+                return  PaymentCardView(paymentCard: _cards[index % _cards.length]);
               },
               itemCount: _cards.length,
               onPageChanged: (int page) {
@@ -46,7 +47,7 @@ class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _cards.map((card) {

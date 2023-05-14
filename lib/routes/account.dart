@@ -82,7 +82,7 @@ class _AccountPageState extends State<AccountPage> {
               color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
         ),
         onTap: () {
-          print("hello cards");
+          Navigator.pushNamed(context, '/mycards');
         },
       )),
       SizedBox(height: 4),

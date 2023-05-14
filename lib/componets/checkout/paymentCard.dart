@@ -1,26 +1,45 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
+import '../../model/user.dart';
 import '../../utils/hexColor.dart';
 
-class PaymentCardView extends StatefulWidget{
-  Color backgroundColor;
+class PaymentCardView extends StatefulWidget {
+  PaymentCard paymentCard;
 
-  PaymentCardView({required this.backgroundColor});
+  PaymentCardView({required this.paymentCard});
 
   @override
-  State<StatefulWidget> createState () => _PaymentCardViewState();
-
+  State<StatefulWidget> createState() => _PaymentCardViewState();
 }
 
-class _PaymentCardViewState extends State<PaymentCardView>{
+class _PaymentCardViewState extends State<PaymentCardView> {
+
+  late Color backgroundColor;
+
   @override
-  Widget build(BuildContext context){
+  void initState(){
+    Random random = Random();
+    backgroundColor = colors[random.nextInt(colors.length)];
+    super.initState();
+  }
+
+
+  final colors = [
+    HexColor.fromHex('#8DBA37'),
+    HexColor.fromHex('#7D7D7D'),
+    HexColor.fromHex('#9BBBFF')
+  ];
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: widget.backgroundColor,
+          color: backgroundColor,
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -44,15 +63,14 @@ class _PaymentCardViewState extends State<PaymentCardView>{
                 ],
               ),
               const SizedBox(height: 30),
-              const Align(
+               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "1234 5678 9232 0921",
+                  "${widget.paymentCard.number}",
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
-                      color: Colors.white
-                  ),
+                      color: Colors.white),
                 ),
               ),
               const SizedBox(height: 10),
@@ -62,26 +80,22 @@ class _PaymentCardViewState extends State<PaymentCardView>{
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
+                    children:  [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Card Holder",
-                          style: TextStyle(
-                              fontSize: 16.0,
-                              color: Colors.white
-                          ),
+                          style: TextStyle(fontSize: 16.0, color: Colors.white),
                         ),
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Wangzainiunai",
+                          "${widget.paymentCard.cardHolder}",
                           style: TextStyle(
                               fontSize: 16.0,
                               color: Colors.white,
-                              fontWeight: FontWeight.bold
-                          ),
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],

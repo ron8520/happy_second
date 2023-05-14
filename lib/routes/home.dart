@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:happy_second/componets/product_list.dart';
 import 'package:happy_second/routes/category.dart';
 import 'package:happy_second/utils/hexColor.dart';
+
+import '../componets/product/product_list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

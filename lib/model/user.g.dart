@@ -34,10 +34,12 @@ const _$UserTypeEnumMap = {
 PaymentCard _$PaymentCardFromJson(Map<String, dynamic> json) => PaymentCard(
       number: json['number'] as String,
       cardHolder: json['cardHolder'] as String,
+      selected: json['selected'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PaymentCardToJson(PaymentCard instance) =>
     <String, dynamic>{
       'number': instance.number,
       'cardHolder': instance.cardHolder,
+      'selected': instance.selected,
     };
