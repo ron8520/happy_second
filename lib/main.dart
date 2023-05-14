@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:happy_second/componets/checkout/paymentSuccess.dart';
 import 'package:happy_second/routes/account.dart';
 import 'package:happy_second/routes/cart.dart';
 import 'package:happy_second/routes/filter.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
       ],
           child:  MaterialApp(
               routes: {
-                '/login': (context) => LoginPage()
+                '/login': (context) => LoginPage(),
+                '/paymentSuccess': (context) => PaymentSuccessPage(),
               },
               builder: EasyLoading.init(),
               theme: ThemeData(

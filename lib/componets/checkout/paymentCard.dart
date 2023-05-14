@@ -1,54 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:happy_second/utils/hexColor.dart';
 
-class HorizontalSwipeCard extends StatefulWidget {
+import '../../utils/hexColor.dart';
+
+class PaymentCardView extends StatefulWidget{
+  Color backgroundColor;
+
+  PaymentCardView({required this.backgroundColor});
+
   @override
-  _HorizontalSwipeCardState createState() => _HorizontalSwipeCardState();
+  State<StatefulWidget> createState () => _PaymentCardViewState();
+
 }
 
-class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
-  final PageController _pageController = PageController(viewportFraction: 0.9);
-  int _currentPage = 0;
-
+class _PaymentCardViewState extends State<PaymentCardView>{
   @override
-  void initState() {
-    super.initState();
-  }
-
-  final List<Widget> _cards = [
-    Padding(
-      padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: HexColor.fromHex('#8DBA37'),
-        ),
-        child: const ListTile(
-          leading: Icon(Icons.ac_unit),
-          title: Text('Card 1'),
-          subtitle: Text('Card 1 subtitle'),
-        ),
-      ),
-    ),
-    Padding(
-        padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: HexColor.fromHex('#7D7D7D'),
-          ),
-          child: ListTile(
-            leading: Icon(Icons.access_alarm),
-            title: Text('Card 2'),
-            subtitle: Text('Card 2 subtitle'),
-          ),
-        )),
-    Padding(
+  Widget build(BuildContext context){
+    return Padding(
       padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: HexColor.fromHex('#9BBBFF'),
+          color: widget.backgroundColor,
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -77,9 +49,9 @@ class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
                 child: Text(
                   "1234 5678 9232 0921",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20.0,
-                    color: Colors.white
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                      color: Colors.white
                   ),
                 ),
               ),
@@ -125,58 +97,6 @@ class _HorizontalSwipeCardState extends State<HorizontalSwipeCard> {
           ),
         ),
       ),
-    )
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 240,
-      width: double.infinity,
-      child: Column(
-        children: [
-          Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              itemBuilder: (BuildContext context, int index) {
-                return _cards[index % _cards.length];
-              },
-              itemCount: _cards.length,
-              onPageChanged: (int page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _cards.map((card) {
-                int index = _cards.indexOf(card);
-                return Container(
-                  width: 10.0,
-                  height: 10.0,
-                  margin: const EdgeInsets.symmetric(horizontal: 2.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentPage == index
-                        ? HexColor.fromHex("#5E7737")
-                        : Colors.grey.withOpacity(0.5),
-                  ),
-                );
-              }).toList(),
-            ),
-          )
-        ],
-      ),
     );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 }

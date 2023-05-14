@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../componets/checkout/paymentCard.dart';
+import '../componets/checkout/paymentCardList.dart';
+import '../componets/checkout/paymentSuccess.dart';
 import '../utils/hexColor.dart';
 import 'myorder.dart';
 
@@ -174,7 +175,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 20.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -240,10 +241,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 )
               ],
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 10.0),
             const Text(
                 "-----------------------------------------------------------"),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 10.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: const [
@@ -289,10 +290,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ElevatedButton(
               onPressed: () {
                 // Handle checkout logic here
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => OrderHistoryPage()),
-                );
+                Navigator.pushNamed(context, '/paymentSuccess');
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: HexColor.fromHex("#5E7737"),
@@ -302,7 +300,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       20), // Change the value to adjust the radius
                 ),
               ),
-              child: const Text('Checkout',
+              child: const Text('Pay Now',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
