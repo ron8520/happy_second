@@ -19,11 +19,9 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
         child: Padding(
-      padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
       child: Column(
-        children: [
-          Text("---- 5 products ----", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          SizedBox(height: 20),
+        children: const [
           ProductList()
         ],
       ),

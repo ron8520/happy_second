@@ -50,9 +50,9 @@ class _HomePageState extends State<HomePage> {
                       });
                     },
                     children: const [
-                      Image(image: AssetImage("lib/assets/banner3.png")),
-                      Image(image: AssetImage("lib/assets/banner2.png")),
-                      Image(image: AssetImage("lib/assets/banner1.png"))
+                      Image(image: AssetImage("lib/assets/banner/banner3.png")),
+                      Image(image: AssetImage("lib/assets/banner/banner2.png")),
+                      Image(image: AssetImage("lib/assets/banner/banner1.png"))
                     ],
                   )),
             )),
