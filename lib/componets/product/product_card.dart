@@ -3,6 +3,8 @@ import 'package:happy_second/componets/product/product_detail.dart';
 import 'package:happy_second/utils/hexColor.dart';
 
 import '../../model/product.dart';
+import '../../routes/login.dart';
+import '../../utils/storage/sharedPreferences_util.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -67,7 +69,13 @@ class ProductCard extends StatelessWidget {
                 ),
                 IconButton(
                     onPressed: () {
-                      print("add to cart");
+                      if (SharedPreferencesUtil.preferences.getString("email") == null) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const LoginPage(),
+                        ));
+                      }else{
+                        print("Add to Cart");
+                      }
                     },
                     iconSize: 20,
                     icon: Icon(
