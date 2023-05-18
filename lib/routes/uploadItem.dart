@@ -36,19 +36,9 @@ class _UploadProductPageState extends State<UploadProductPage> {
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Handle checkout logic here
-
+                    // Handle image picking logic
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: HexColor.fromHex("#5E7737"),
-                    fixedSize: const Size(400, 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                          20), // Change the value to adjust the radius
-                    ),
-                  ),
-                  child: const Text('Upload Image',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Text('Upload Image'),
                 ),
               ),
               // Item Name

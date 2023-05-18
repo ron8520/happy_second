@@ -1,8 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:happy_second/componets/product/product_detail.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:provider/provider.dart';
+
+import '../../model/product.dart';
+import '../../routes/login.dart';
+import '../../states/app.dart';
+import '../../utils/storage/sharedPreferences_util.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({super.key});
+  final Product product;
+  const ProductCard({super.key, required this.product});
+
+  void _handleAddToCart(BuildContext context) {
+    if (SharedPreferencesUtil.preferences.getString("userId") == null) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ));
+    }else{
+      EasyLoading.showSuccess("Add to Cart Successfully!");
+      final app = Provider.of<AppModel>(context, listen: false);
+      app.addToCart(context, product);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +31,11 @@ class ProductCard extends StatelessWidget {
       children: [
         GestureDetector(
             onTap: () {
-              print("go to product details");
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ProductDetail(product: product)),
+              );
             },
             child: Container(
                 height: 160,
@@ -19,30 +44,30 @@ class ProductCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     color: Colors.grey[300]),
                 child: Stack(
-                  children: const [
+                  children: [
                     Positioned(
                         child: Align(
                       alignment: Alignment.center,
                       child: Image(
                           height: 120,
                           width: 120,
-                          image: AssetImage("lib/assets/shanyi.png")),
+                          image: AssetImage(product.imageUrl!)),
                     ))
                   ],
                 ))),
         Padding(
             padding: const EdgeInsets.fromLTRB(30, 10, 20, 0),
             child: Row(
-              children: const [Text("Alter")],
+              children: [Text("${product.brand}")],
             )),
         Padding(
             padding: const EdgeInsets.fromLTRB(30, 5, 20, 0),
             child: Row(
-              children: const [
+              children: [
                 Flexible(
                   child: Text(
                     overflow: TextOverflow.ellipsis,
-                    "Demon Slayer - Agatsuma Zenitsu",
+                    "${product.name}",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 )
@@ -53,14 +78,12 @@ class ProductCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "\$50",
+                Text(
+                  "\$${product.price}",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 IconButton(
-                    onPressed: () {
-                      print("add to cart");
-                    },
+                    onPressed: () => _handleAddToCart(context),
                     iconSize: 20,
                     icon: Icon(
                       Icons.shopping_cart,

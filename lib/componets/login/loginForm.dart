@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:happy_second/database/db.dart';
+import 'package:happy_second/states/app.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +33,7 @@ class _LoginFormState extends State<LoginForm> {
       String email = _emailController.text;
       String password = _passwordController.text;
       final db = Provider.of<AppDatabase>(context, listen: false);
+      final app = Provider.of<AppModel>(context, listen: false);
 
       User? user = await db.findUserByEmail(email);
       if(user == null){
@@ -39,8 +43,10 @@ class _LoginFormState extends State<LoginForm> {
         EasyLoading.showInfo("Login information is not correct!");
         return false;
       } else {
+        app.currentUser = user;
         EasyLoading.showSuccess("Login successful!");
-        await SharedPreferencesUtil.setStringItem('email', email);
+        await SharedPreferencesUtil.setStringItem('userId', user.uuid);
+
         return true;
       }
     } catch (e) {

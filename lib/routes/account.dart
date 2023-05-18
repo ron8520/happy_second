@@ -110,8 +110,7 @@ class _AccountPageState extends State<AccountPage> {
               color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
         ),
         onTap: () {
-          SharedPreferencesUtil.preferences.remove("email");
-          SharedPreferencesUtil.preferences.remove("password");
+          SharedPreferencesUtil.preferences.remove("userId");
           Navigator.pushNamed(context, "/");
         },
       ))

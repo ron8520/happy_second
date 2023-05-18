@@ -11,7 +11,10 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       username: json['username'] as String,
       emailAddress: json['emailAddress'] as String,
       password: json['password'] as String,
-      usertype: $enumDecodeNullable(_$UserTypeEnumMap, json['usertype']),
+      usertype: $enumDecode(_$UserTypeEnumMap, json['usertype']),
+      cart: (json['cart'] as List<dynamic>?)
+          ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
+          .toList(),
       cards: (json['cards'] as List<dynamic>?)
           ?.map((e) => PaymentCard.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -22,8 +25,9 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'username': instance.username,
       'emailAddress': instance.emailAddress,
       'password': instance.password,
-      'usertype': _$UserTypeEnumMap[instance.usertype],
+      'usertype': _$UserTypeEnumMap[instance.usertype]!,
       'cards': instance.cards,
+      'cart': instance.cart,
     };
 
 const _$UserTypeEnumMap = {
