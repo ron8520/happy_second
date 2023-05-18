@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:happy_second/states/app.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:provider/provider.dart';
+import '../componets/product/product_detail.dart';
+import '../model/product.dart';
 import 'checkout.dart';
 
 class CartPage extends StatefulWidget {
@@ -10,37 +14,37 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+
+
   @override
   void initState() {
     super.initState();
   }
 
-  List<CartItem> cartItems = [
-    CartItem(name: 'Product A', price: 50.0),
-    CartItem(name: 'Product B', price: 50.0),
-    CartItem(name: 'Product C', price: 15.0),
-    CartItem(name: 'Product D', price: 50.0),
-  ];
 
-  double getTotalPrice() {
+  double getTotalPrice(List<Product> products) {
     double totalPrice = 0.0;
-    for (CartItem item in cartItems) {
-      totalPrice += item.price;
+    for (Product product in products) {
+      totalPrice += product.price;
     }
     return totalPrice;
   }
 
   @override
   Widget build(BuildContext context) {
+    final app = Provider.of<AppModel>(context, listen: true);
+    final user = app.currentUser;
+
+
     return Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Column(
           children: [
             Expanded(
               child: ListView.builder(
-                  itemCount: cartItems.length,
+                  itemCount: user!.cart?.length,
                   itemBuilder: (context, index) {
-                    final cartItem = cartItems[index];
+                    final cartItem = user.cart![index];
                     return Padding(
                       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
                       child: SizedBox(
@@ -49,7 +53,11 @@ class _CartPageState extends State<CartPage> {
                           children: [
                             GestureDetector(
                                 onTap: () {
-                                  print("go to product details");
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProductDetail(product: cartItem!)),
+                                  );
                                 },
                                 child: Container(
                                     height: 120,
@@ -58,7 +66,7 @@ class _CartPageState extends State<CartPage> {
                                         borderRadius: BorderRadius.circular(20),
                                         color: Colors.grey[300]),
                                     child: Stack(
-                                      children: const [
+                                      children: [
                                         Positioned(
                                             child: Align(
                                           alignment: Alignment.center,
@@ -66,7 +74,7 @@ class _CartPageState extends State<CartPage> {
                                               height: 100,
                                               width: 100,
                                               image: AssetImage(
-                                                  "lib/assets/shanyi.png")),
+                                                  cartItem!.imageUrl!)),
                                         ))
                                       ],
                                     ))),
@@ -80,18 +88,17 @@ class _CartPageState extends State<CartPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          cartItem.name,
-                                          style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold),
+                                        Flexible(
+                                          child: Text(
+                                            overflow: TextOverflow.ellipsis,
+                                            cartItem.name,
+                                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                          ),
                                         ),
                                         IconButton(
                                           icon: const Icon(Icons.close),
                                           onPressed: () {
-                                            setState(() {
-                                              cartItems.removeAt(index);
-                                            });
+                                            app.removeFromCart(context, index);
                                           },
                                         ),
                                       ],
@@ -133,7 +140,7 @@ class _CartPageState extends State<CartPage> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$${getTotalPrice().toStringAsFixed(2)} ',
+                        text: '\$${getTotalPrice(user.cart!).toStringAsFixed(2)} ',
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -160,16 +167,24 @@ class _CartPageState extends State<CartPage> {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
-                      TextSpan(
+                      user.cart!.isEmpty ?
+                      const TextSpan(
+                        text: '\$0.00 ',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ) :
+                      const TextSpan(
                         text: '\$5.00 ',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             color: Colors.black),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: 'AUD',
                         style: TextStyle(
                             fontSize: 18,
@@ -196,7 +211,7 @@ class _CartPageState extends State<CartPage> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$${(getTotalPrice() + 5).toStringAsFixed(2)} ',
+                        text: '\$${(getTotalPrice(user.cart!) + 5).toStringAsFixed(2)} ',
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -238,11 +253,4 @@ class _CartPageState extends State<CartPage> {
           ],
         ));
   }
-}
-
-class CartItem {
-  String name;
-  double price;
-
-  CartItem({required this.name, required this.price});
 }

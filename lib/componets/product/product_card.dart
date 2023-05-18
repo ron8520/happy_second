@@ -1,14 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:happy_second/componets/product/product_detail.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:provider/provider.dart';
 
 import '../../model/product.dart';
 import '../../routes/login.dart';
+import '../../states/app.dart';
 import '../../utils/storage/sharedPreferences_util.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
   const ProductCard({super.key, required this.product});
+
+  void _handleAddToCart(BuildContext context) {
+    if (SharedPreferencesUtil.preferences.getString("userId") == null) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ));
+    }else{
+      final app = Provider.of<AppModel>(context, listen: false);
+      app.addToCart(context, product);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,15 +81,7 @@ class ProductCard extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 IconButton(
-                    onPressed: () {
-                      if (SharedPreferencesUtil.preferences.getString("email") == null) {
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const LoginPage(),
-                        ));
-                      }else{
-                        print("Add to Cart");
-                      }
-                    },
+                    onPressed: () => _handleAddToCart(context),
                     iconSize: 20,
                     icon: Icon(
                       Icons.shopping_cart,

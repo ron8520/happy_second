@@ -11,18 +11,19 @@ class User {
   final String username;
   final String emailAddress;
   final String password;
-  UserType? usertype;
+  UserType usertype;
   List<PaymentCard>? cards;
   List<Product>? cart;
 
-  User(
-      {required this.uuid,
-      required this.username,
-      required this.emailAddress,
-      required this.password,
-      this.usertype,
-      this.cards,
-      this.cart});
+  User({
+    required this.uuid,
+    required this.username,
+    required this.emailAddress,
+    required this.password,
+    required this.usertype,
+    this.cart,
+    this.cards
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
@@ -32,13 +33,19 @@ class User {
       uuid: Value(uuid),
       username: Value(username),
       emailAddress: Value(emailAddress),
-      password: Value(password));
+      password: Value(password),
+      userType: Value(usertype),
+  );
 
-  factory User.fromDB(UsersDB user) => User(
+  factory User.fromDB(UsersDB user, {List<ProductDB>? carts}) => User(
       uuid: user.uuid,
       username: user.username,
       emailAddress: user.emailAddress,
-      password: user.password);
+      password: user.password,
+      usertype: user.userType,
+      cart: carts != null ?
+        carts.map((i) => Product.fromDB(i)).toList() : []
+  );
 }
 
 @JsonSerializable()

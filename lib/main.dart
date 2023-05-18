@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/componets/checkout/paymentSuccess.dart';
@@ -10,11 +12,13 @@ import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
 import 'package:happy_second/routes/search.dart';
+import 'package:happy_second/states/app.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
 import 'package:provider/provider.dart';
 
 import 'database/db.dart';
+import 'model/user.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,28 +36,30 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    String? userId = SharedPreferencesUtil.preferences.getString("userId");
     return MultiProvider(
-      providers: [
-        Provider<AppDatabase>(
-          create: (context) => AppDatabase(),
-          dispose: (context, db) => db.close(),
-        ),
-      ],
-          child:  MaterialApp(
-              routes: {
-                '/login': (context) => LoginPage(),
-                '/paymentSuccess': (context) => PaymentSuccessPage(),
-                '/becomeSeller': (context) => SubscribePage(),
-                '/myorders': (context) => OrderHistoryPage(),
-                '/mycards': (context) => CardPage()
-              },
-              builder: EasyLoading.init(),
-              theme: ThemeData(
-                  textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: HexColor.fromHex("#5E7737"))),
-              debugShowCheckedModeBanner: false,
-              home: MainPage())
-    );
+        providers: [
+          Provider<AppDatabase>(
+            create: (context) => AppDatabase(),
+            dispose: (context, db) => db.close(),
+          ),
+          ChangeNotifierProvider(
+              create: (context) => AppModel(userId: userId))
+        ],
+        child: MaterialApp(
+            routes: {
+              '/login': (context) => LoginPage(),
+              '/paymentSuccess': (context) => PaymentSuccessPage(),
+              '/becomeSeller': (context) => SubscribePage(),
+              '/myorders': (context) => OrderHistoryPage(),
+              '/mycards': (context) => CardPage()
+            },
+            builder: EasyLoading.init(),
+            theme: ThemeData(
+                textSelectionTheme: TextSelectionThemeData(
+                    cursorColor: HexColor.fromHex("#5E7737"))),
+            debugShowCheckedModeBanner: false,
+            home: MainPage()));
   }
 }
 
@@ -85,7 +91,13 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    fetchUserInfo();
     super.initState();
+  }
+
+  Future<void> fetchUserInfo() async {
+    final app = Provider.of<AppModel>(context, listen: false);
+    await app.fetchUserDetails(context);
   }
 
   @override
@@ -161,16 +173,22 @@ class _MainPageState extends State<MainPage> {
           unselectedItemColor: Colors.grey[400],
           currentIndex: index,
           onTap: (x) {
-            if(x == 2 || x == 3){
-                if (SharedPreferencesUtil.preferences.getString("email") == null) {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const LoginPage(),
-                  ));
-                }
-            }
+            if (x == 2 || x == 3) {
+              if (SharedPreferencesUtil.preferences.getString("userId") ==
+                  null) {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ));
+              } else {
+                setState(() {
+                  index = x;
+                });
+              }
+            } else {
               setState(() {
                 index = x;
               });
+            }
           },
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(

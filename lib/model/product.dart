@@ -17,6 +17,10 @@ class Product {
 
   Product(this.uuid, this.name, this.brand, this.description, this.price, this.category, this.subCategory, this.imageUrl);
 
+
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
+
+
   ProductsCompanion toProductsCompanion() => ProductsCompanion(
       uuid: Value(uuid),
       name: Value(name),

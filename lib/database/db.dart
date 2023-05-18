@@ -24,6 +24,8 @@ class Users extends Table {
 
   TextColumn get password => text()();
 
+  IntColumn get userType => intEnum<UserType>()();
+
   @override
   Set<Column> get primaryKey => {uuid};
 }
@@ -50,6 +52,18 @@ class Products extends Table {
   Set<Column> get primaryKey => {uuid};
 }
 
+@DataClassName('CartDB')
+class Carts extends Table {
+  TextColumn get uuid => text().withLength(min: 36, max: 36)();
+
+  TextColumn get userId => text().withLength(min: 36, max: 36)();
+
+  TextColumn get productId => text().withLength(min: 36, max: 36)();
+
+  @override
+  Set<Column> get primaryKey => {uuid};
+}
+
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
@@ -63,7 +77,7 @@ LazyDatabase _openConnection() {
 
 // this annotation tells moor to prepare a database class that uses both of the
 // tables we just defined. We'll see how to use that database class in a moment.
-@DriftDatabase(tables: [Users, Products])
+@DriftDatabase(tables: [Users, Products, Carts])
 class AppDatabase extends _$AppDatabase {
   String? dbPath;
 
@@ -91,8 +105,7 @@ class AppDatabase extends _$AppDatabase {
                 price: 50,
                 subCategory: SubCategory.plastic,
                 category: Category.toys,
-                image: const Value("lib/assets/product/shanyi.png")
-            ),
+                image: const Value("lib/assets/product/shanyi.png")),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Demon Slayer - Kamado Tanjirou",
@@ -102,8 +115,7 @@ class AppDatabase extends _$AppDatabase {
                 price: 70,
                 subCategory: SubCategory.wooden,
                 category: Category.toys,
-                image: const Value("lib/assets/product/tanzhilang.png")
-            ),
+                image: const Value("lib/assets/product/tanzhilang.png")),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Demon Slayer - Hashibira Inosuke",
@@ -113,8 +125,7 @@ class AppDatabase extends _$AppDatabase {
                 price: 60,
                 subCategory: SubCategory.plush,
                 category: Category.toys,
-                image: const Value("lib/assets/product/yizhizhu.png")
-            ),
+                image: const Value("lib/assets/product/yizhizhu.png")),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Solid Button Front Dress",
@@ -124,18 +135,17 @@ class AppDatabase extends _$AppDatabase {
                 price: 200,
                 subCategory: SubCategory.women,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/dress.png")
-            ),
+                image: const Value("lib/assets/product/dress.png")),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Brown Cotton Jumper",
                 brand: "SHEIN",
-                description: "Included is our Relaxed cotton sweater. Made from 100% cotton yarn, in a relaxed silhouette and featuring a ribbed high neckline. This sweater is the perfect piece to keep your little one rugged up through cold days and nights. Mix and match with other pieces from our collection.Each piece has been designed to work together harmoniously so that any combination goes.",
+                description:
+                    "Included is our Relaxed cotton sweater. Made from 100% cotton yarn, in a relaxed silhouette and featuring a ribbed high neckline. This sweater is the perfect piece to keep your little one rugged up through cold days and nights. Mix and match with other pieces from our collection.Each piece has been designed to work together harmoniously so that any combination goes.",
                 price: 80,
                 subCategory: SubCategory.men,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/jacket.png")
-            ),
+                image: const Value("lib/assets/product/jacket.png")),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Sky Blue Blazer",
@@ -145,8 +155,7 @@ class AppDatabase extends _$AppDatabase {
                 price: 30,
                 subCategory: SubCategory.children,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/baby.png")
-            )
+                image: const Value("lib/assets/product/baby.png"))
           ]);
         });
       },
@@ -161,11 +170,27 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> createCartItem(CartsCompanion cart) async {
+    return transaction(() async {
+      await into(carts).insert(cart);
+    });
+  }
+
+  Future<void> deleteCartItem(String userId, String productId) async {
+    return transaction(() async {
+      await (delete(carts)
+            ..where(
+                (t) => t.userId.equals(userId) & t.productId.equals(productId)))
+          .go();
+    });
+  }
+
   Future<User?> findUser(String username) async {
     try {
       final user = await (select(users)
             ..where((item) => item.username.equals(username)))
           .getSingle();
+
       return User.fromDB(user);
     } catch (e) {
       return null;
@@ -177,7 +202,17 @@ class AppDatabase extends _$AppDatabase {
       final user = await (select(users)
             ..where((item) => item.emailAddress.equals(email)))
           .getSingle();
-      return User.fromDB(user);
+
+      final cartItems = await (select(carts)
+        ..where((item) => item.userId.equals(user.uuid)))
+          .get();
+
+      final productIds = cartItems.map((cartItem) => cartItem.productId).toList();
+
+      final product = await (select(products)
+        ..where((item) => item.uuid.isIn(productIds))).get();
+
+      return User.fromDB(user, carts: product);
     } catch (e) {
       return null;
     }
@@ -187,6 +222,27 @@ class AppDatabase extends _$AppDatabase {
     try {
       final allProduct = await select(products).get();
       return allProduct.map((product) => Product.fromDB(product)).toList();
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<User?> findUserById(String id) async {
+    try {
+      final user = await (select(users)
+        ..where((item) => item.uuid.equals(id)))
+          .getSingle();
+
+      final cartItems = await (select(carts)
+          ..where((item) => item.userId.equals(id)))
+          .get();
+
+      final productIds = cartItems.map((cartItem) => cartItem.productId).toList();
+
+      final product = await (select(products)
+          ..where((item) => item.uuid.isIn(productIds))).get();
+
+      return User.fromDB(user, carts: product);
     } catch (e) {
       return null;
     }

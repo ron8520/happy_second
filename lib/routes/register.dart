@@ -35,13 +35,17 @@ class _RegisterPageState extends State<RegisterPage> {
       } else {
         final db = Provider.of<AppDatabase>(context, listen: false);
         User newUser = User(
-            uuid: const Uuid().v4(),
+            uuid: const Uuid().v4().toString(),
             emailAddress: _emailController.text,
             username: _usernameController.text,
-            password: _passwordController.text);
+            password: _passwordController.text,
+            usertype: UserType.normal,
+            cart: [],
+            cards: []
+        );
 
         await db.createUser(newUser.toUsersCompanion()).then((value) =>
-            {EasyLoading.dismiss(),Navigator.pushNamed(context, "/login")});
+            {EasyLoading.dismiss(), Navigator.pushNamed(context, "/login")});
       }
       setState(() {
         _isLoading = false;
