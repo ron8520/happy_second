@@ -9,7 +9,9 @@ import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
+import 'package:happy_second/routes/personalDetail.dart';
 import 'package:happy_second/routes/search.dart';
+import 'package:happy_second/routes/uploadItem.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
 import 'package:provider/provider.dart';
@@ -44,8 +46,10 @@ class MyApp extends StatelessWidget {
                 '/login': (context) => LoginPage(),
                 '/paymentSuccess': (context) => PaymentSuccessPage(),
                 '/becomeSeller': (context) => SubscribePage(),
+                '/uploadItem': (context) => UploadProductPage(),
                 '/myorders': (context) => OrderHistoryPage(),
-                '/mycards': (context) => CardPage()
+                '/mycards': (context) => CardPage(),
+                '/personalDetail': (context) => PersonalDetailPage(name: "name", email: "email", contactNumber: "contactNumber", address: "address", password: "password")
               },
               builder: EasyLoading.init(),
               theme: ThemeData(

@@ -39,7 +39,7 @@ class _AccountPageState extends State<AccountPage> {
                 fontWeight: FontWeight.bold),
           ),
           onTap: () {
-            print("hello person");
+            Navigator.pushNamed(context, '/personalDetail');
           },
         ),
       ),
@@ -55,6 +55,21 @@ class _AccountPageState extends State<AccountPage> {
           ),
           onTap: () {
             Navigator.pushNamed(context, '/becomeSeller');
+          },
+        ),
+      ),
+      SizedBox(height: 4),
+      Card(
+        child: ListTile(
+          leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
+          title: Text(
+            "Upload Item",
+            style: TextStyle(
+                color: HexColor.fromHex("#5E7737"),
+                fontWeight: FontWeight.bold),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/uploadItem');
           },
         ),
       ),
