@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:happy_second/componets/history/historyCard.dart';
+import 'package:happy_second/routes/orderDetail.dart';
 
 import '../utils/hexColor.dart';
 
@@ -36,7 +37,15 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
             itemCount: _orders.length,
             itemBuilder: (context, index) {
               Order order = _orders[index];
-              return HistoryCard(order: order);
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => OrderDetailPage(order: order)),
+                  );
+                },
+                child: HistoryCard(order: order),
+              );
             },
           ),
         ));

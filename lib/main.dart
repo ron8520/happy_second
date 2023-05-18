@@ -8,6 +8,9 @@ import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
+import 'package:happy_second/routes/personalDetail.dart';
+import 'package:happy_second/routes/searchView.dart';
+import 'package:happy_second/routes/uploadItem.dart';
 import 'package:happy_second/routes/searchView.dart';
 import 'package:happy_second/states/app.dart';
 import 'package:happy_second/states/search.dart';
@@ -43,20 +46,23 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => AppModel(userId: userId)),
           ChangeNotifierProvider(create: (context) => SearchModel())
         ],
-        child: MaterialApp(
-            routes: {
-              '/login': (context) => LoginPage(),
-              '/paymentSuccess': (context) => PaymentSuccessPage(),
-              '/becomeSeller': (context) => SubscribePage(),
-              '/myorders': (context) => OrderHistoryPage(),
-              '/mycards': (context) => CardPage()
-            },
-            builder: EasyLoading.init(),
-            theme: ThemeData(
-                textSelectionTheme: TextSelectionThemeData(
-                    cursorColor: HexColor.fromHex("#5E7737"))),
-            debugShowCheckedModeBanner: false,
-            home: MainPage()));
+          child:  MaterialApp(
+              routes: {
+                '/login': (context) => LoginPage(),
+                '/paymentSuccess': (context) => PaymentSuccessPage(),
+                '/becomeSeller': (context) => SubscribePage(),
+                '/uploadItem': (context) => UploadProductPage(),
+                '/myorders': (context) => OrderHistoryPage(),
+                '/mycards': (context) => CardPage(),
+                '/personalDetail': (context) => PersonalDetailPage(name: "name", email: "email", contactNumber: "contactNumber", address: "address", password: "password")
+              },
+              builder: EasyLoading.init(),
+              theme: ThemeData(
+                  textSelectionTheme: TextSelectionThemeData(
+                      cursorColor: HexColor.fromHex("#5E7737"))),
+              debugShowCheckedModeBanner: false,
+              home: MainPage())
+    );
   }
 }
 
