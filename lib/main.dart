@@ -1,26 +1,24 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/componets/checkout/paymentSuccess.dart';
 import 'package:happy_second/routes/account.dart';
 import 'package:happy_second/routes/becomeseller.dart';
 import 'package:happy_second/routes/cart.dart';
-import 'package:happy_second/routes/filter.dart';
 import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
 import 'package:happy_second/routes/personalDetail.dart';
-import 'package:happy_second/routes/search.dart';
+import 'package:happy_second/routes/searchView.dart';
 import 'package:happy_second/routes/uploadItem.dart';
+import 'package:happy_second/routes/searchView.dart';
 import 'package:happy_second/states/app.dart';
+import 'package:happy_second/states/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
 import 'package:provider/provider.dart';
 
 import 'database/db.dart';
-import 'model/user.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,14 +38,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     String? userId = SharedPreferencesUtil.preferences.getString("userId");
     return MultiProvider(
-      providers: [
-        Provider<AppDatabase>(
-          create: (context) => AppDatabase(),
-          dispose: (context, db) => db.close(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => AppModel(userId: userId))
-      ],
+        providers: [
+          Provider<AppDatabase>(
+            create: (context) => AppDatabase(),
+            dispose: (context, db) => db.close(),
+          ),
+          ChangeNotifierProvider(create: (context) => AppModel(userId: userId)),
+          ChangeNotifierProvider(create: (context) => SearchModel())
+        ],
           child:  MaterialApp(
               routes: {
                 '/login': (context) => LoginPage(),
@@ -77,8 +75,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int index = 0;
-  static final TextEditingController _searchController =
-      TextEditingController();
 
   Widget? callPage() {
     if (index == 0) {
@@ -97,6 +93,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     fetchUserInfo();
+    fetchAllProducts();
     super.initState();
   }
 
@@ -105,8 +102,14 @@ class _MainPageState extends State<MainPage> {
     await app.fetchUserDetails(context);
   }
 
+  Future<void> fetchAllProducts() async {
+    final search = Provider.of<SearchModel>(context, listen: false);
+    await search.fetchAllProducts(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final search = Provider.of<SearchModel>(context, listen: true);
     final _title = <Widget>[
       const Image(
           width: 70, height: 70, image: AssetImage("lib/assets/logo.jpg")),
@@ -114,7 +117,11 @@ class _MainPageState extends State<MainPage> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.grey[200]),
         child: TextField(
-          controller: _searchController,
+          controller: search.searchController,
+          onChanged: (value) async {
+            // Implement logic to update search results based on the input.
+            await search.searchProducts(context, value);
+          },
           decoration: InputDecoration(
             hintText: "Search...",
             prefixIcon: Icon(Icons.search, color: HexColor.fromHex("#5E7737")),
@@ -140,23 +147,13 @@ class _MainPageState extends State<MainPage> {
             backgroundColor: Colors.black12,
             child: Icon(Icons.person, color: Colors.white),
           )),
-      Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: IconButton(
-            iconSize: 30,
-            icon: Icon(Icons.list, color: HexColor.fromHex("#5E7737")),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const Filter(),
-              ));
-            },
-          )),
+      const SizedBox(),
       Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
           child: IconButton(
             iconSize: 30,
             icon: Icon(Icons.delete, color: HexColor.fromHex("#5E7737")),
-            onPressed: ()  async {
+            onPressed: () async {
               final app = Provider.of<AppModel>(context, listen: false);
               await app.removeAllCartItems(context);
               EasyLoading.showSuccess("Remove all items successfully!");
