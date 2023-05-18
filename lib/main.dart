@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/componets/checkout/paymentSuccess.dart';
 import 'package:happy_second/routes/account.dart';
 import 'package:happy_second/routes/becomeseller.dart';
 import 'package:happy_second/routes/cart.dart';
-import 'package:happy_second/routes/filter.dart';
 import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
@@ -19,7 +16,6 @@ import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
 import 'package:provider/provider.dart';
 
 import 'database/db.dart';
-import 'model/user.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -145,17 +141,7 @@ class _MainPageState extends State<MainPage> {
             backgroundColor: Colors.black12,
             child: Icon(Icons.person, color: Colors.white),
           )),
-      Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: IconButton(
-            iconSize: 30,
-            icon: Icon(Icons.list, color: HexColor.fromHex("#5E7737")),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const Filter(),
-              ));
-            },
-          )),
+      const SizedBox(),
       Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
           child: IconButton(
