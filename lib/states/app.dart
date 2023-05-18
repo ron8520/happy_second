@@ -1,4 +1,3 @@
-
 import 'package:drift/drift.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -27,7 +26,6 @@ class AppModel extends ChangeNotifier {
         userId: Value(currentUser!.uuid),
         productId: Value(product.uuid)));
 
-
     notifyListeners();
   }
 
@@ -44,7 +42,7 @@ class AppModel extends ChangeNotifier {
   }
 
   Future<void> fetchUserDetails(BuildContext context) async {
-    if(userId == null){
+    if (userId == null) {
       return;
     }
     final db = Provider.of<AppDatabase>(context, listen: false);
@@ -60,5 +58,34 @@ class AppModel extends ChangeNotifier {
     await db.deleteAllCartItems(currentUser!.uuid);
     currentUser!.cart = [];
     notifyListeners();
+  }
+
+  Future<void> addNewCard(BuildContext context, PaymentCard newCard) async {
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    currentUser!.cards!.add(newCard);
+
+    await db.createNewCard(PaymentCardsCompanion(
+      uuid: Value(const Uuid().v4()),
+      userId: Value(currentUser!.uuid),
+      expiryDate: Value(newCard.expiryDate),
+      cvv: Value(newCard.cvv),
+      cardNumber: Value(newCard.number),
+      cardHolder: Value(newCard.cardHolder)
+    ));
+    EasyLoading.showSuccess("Add new Card Successfully!");
+    notifyListeners();
+  }
+
+  Future<void> removeCard(BuildContext context) async {
+    if(currentUser != null) {
+      final db = Provider.of<AppDatabase>(context, listen: false);
+      for (PaymentCard card in currentUser!.cards!) {
+          if(card.selected){
+            await db.deletePaymentCard(currentUser!.uuid, card.uuid);
+          }
+      }
+      currentUser!.cards!.removeWhere((card) => card.selected);
+      EasyLoading.showSuccess("Remove card Successfully!");
+    }
   }
 }

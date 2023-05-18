@@ -22,13 +22,13 @@ class _AccountPageState extends State<AccountPage> {
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
           height: 10,
-          width: 60,
+          width: 50,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
               color: HexColor.fromHex("#5E7737")),
         )
       ]),
-      SizedBox(height: 20),
+      SizedBox(height: 10),
       Card(
         child: ListTile(
           leading: Icon(Icons.person, color: HexColor.fromHex("#5E7737")),
@@ -134,7 +134,7 @@ class _AccountPageState extends State<AccountPage> {
           )),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 2, 0, 70),
+          padding: EdgeInsets.fromLTRB(0, 2, 0, 20),
           child: Center(
               child: Text(
             "wangwang@gamil.com",

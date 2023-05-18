@@ -36,14 +36,20 @@ const _$UserTypeEnumMap = {
 };
 
 PaymentCard _$PaymentCardFromJson(Map<String, dynamic> json) => PaymentCard(
+      uuid: json['uuid'] as String,
       number: json['number'] as String,
       cardHolder: json['cardHolder'] as String,
+      cvv: json['cvv'] as String,
+      expiryDate: DateTime.parse(json['expiryDate'] as String),
       selected: json['selected'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PaymentCardToJson(PaymentCard instance) =>
     <String, dynamic>{
+      'uuid': instance.uuid,
       'number': instance.number,
       'cardHolder': instance.cardHolder,
+      'cvv': instance.cvv,
+      'expiryDate': instance.expiryDate.toIso8601String(),
       'selected': instance.selected,
     };

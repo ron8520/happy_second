@@ -70,16 +70,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  String? _validateUsername(BuildContext context, String? value) {
+  String? _validateUsername( String? value) {
     if (value == null || value.isEmpty) {
-      return "Password is invalid";
+      return "Username is invalid";
     }
-    final db = Provider.of<AppDatabase>(context, listen: false);
-    db.findUser(value).then((value) {
-      if (value != null) {
-        return "Username already taken";
-      }
-    });
 
     return null;
   }
@@ -169,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       keyboardType: TextInputType.name,
                       controller: _usernameController,
                       cursorColor: HexColor.fromHex("#5E7737"),
-                      validator: (value) => _validateUsername(context, value),
+                      validator: (value) => _validateUsername(value),
                       decoration: InputDecoration(
                           hintText: 'Username',
                           focusColor: Colors.white,

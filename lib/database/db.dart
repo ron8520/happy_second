@@ -64,6 +64,25 @@ class Carts extends Table {
   Set<Column> get primaryKey => {uuid};
 }
 
+@DataClassName('CardDB')
+class PaymentCards extends Table {
+  TextColumn get uuid => text().withLength(min: 36, max: 36)();
+
+  TextColumn get userId => text().withLength(min: 36, max: 36)();
+
+  DateTimeColumn get expiryDate => dateTime()();
+
+  TextColumn get cardHolder => text()();
+
+  TextColumn get cardNumber => text()();
+
+  TextColumn get cvv => text()();
+
+
+  @override
+  Set<Column> get primaryKey => {uuid};
+}
+
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
@@ -77,7 +96,7 @@ LazyDatabase _openConnection() {
 
 // this annotation tells moor to prepare a database class that uses both of the
 // tables we just defined. We'll see how to use that database class in a moment.
-@DriftDatabase(tables: [Users, Products, Carts])
+@DriftDatabase(tables: [Users, Products, Carts, PaymentCards])
 class AppDatabase extends _$AppDatabase {
   String? dbPath;
 
@@ -176,6 +195,21 @@ class AppDatabase extends _$AppDatabase {
     });
   }
 
+  Future<void> createNewCard(PaymentCardsCompanion card) async {
+    return transaction(() async {
+      await into(paymentCards).insert(card);
+    });
+  }
+
+  Future<void> deletePaymentCard(String userId, String cardId) async {
+    return transaction(() async {
+      await (delete(paymentCards)
+        ..where(
+                (t) => t.userId.equals(userId) & t.uuid.equals(cardId)))
+          .go();
+    });
+  }
+
   Future<void> deleteCartItem(String userId, String productId) async {
     return transaction(() async {
       await (delete(carts)
@@ -184,6 +218,7 @@ class AppDatabase extends _$AppDatabase {
           .go();
     });
   }
+
   Future<void> deleteAllCartItems(String userId) async {
     return transaction(() async {
       await (delete(carts)
@@ -222,7 +257,11 @@ class AppDatabase extends _$AppDatabase {
       final product = await (select(products)
         ..where((item) => item.uuid.isIn(productIds))).get();
 
-      return User.fromDB(user, carts: product);
+      final cards = await (select(paymentCards)
+          ..where((item) => item.userId.equals(user.uuid))
+      ).get();
+
+      return User.fromDB(user, carts: product, cards: cards);
     } catch (e) {
       return null;
     }
@@ -252,7 +291,12 @@ class AppDatabase extends _$AppDatabase {
       final product = await (select(products)
           ..where((item) => item.uuid.isIn(productIds))).get();
 
-      return User.fromDB(user, carts: product);
+      final cards = await (select(paymentCards)
+        ..where((item) => item.userId.equals(user.uuid))
+      ).get();
+
+      return User.fromDB(user, carts: product, cards: cards);
+
     } catch (e) {
       return null;
     }

@@ -73,7 +73,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
               },
               child: Text('Save'),
               style: ElevatedButton.styleFrom(
-                  primary: Color.fromRGBO(94, 119, 55, 1)),
+                  backgroundColor: Color.fromRGBO(94, 119, 55, 1)),
             ),
           ],
         );

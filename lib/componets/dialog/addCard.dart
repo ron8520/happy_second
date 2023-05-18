@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:happy_second/model/user.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../states/app.dart';
+import '../../utils/hexColor.dart';
 
 class AddCardDialog extends StatefulWidget {
   @override
@@ -9,14 +15,17 @@ class AddCardDialog extends StatefulWidget {
 class _AddCardDialogState extends State<AddCardDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _cardNumberController = TextEditingController();
+  final TextEditingController _cardHolderController = TextEditingController();
+
   late DateTime _expirationDate;
   final TextEditingController _cvvController = TextEditingController();
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _expirationDate = DateTime.now();
   }
+
 
 
   Future<void> _selectExpirationDate(BuildContext context) async {
@@ -24,7 +33,8 @@ class _AddCardDialogState extends State<AddCardDialog> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 365 * 10)), // 10 years in the future
+      lastDate: DateTime.now()
+          .add(Duration(days: 365 * 10)), // 10 years in the future
     );
     if (picked != null && picked != _expirationDate) {
       setState(() {
@@ -37,7 +47,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
   Widget build(BuildContext context) {
     return SimpleDialog(
         contentPadding: const EdgeInsets.all(20),
-        title: const Text("Add new Card"),
+        title: const Text("Add New Card"),
         children: [
           SingleChildScrollView(
             child: Form(
@@ -45,14 +55,37 @@ class _AddCardDialogState extends State<AddCardDialog> {
               child: Column(
                 children: [
                   TextFormField(
+                    cursorColor: HexColor.fromHex("#5E7737"),
                     controller: _cardNumberController,
-                    decoration: const InputDecoration(
-                      labelText: 'Card Number',
-                    ),
+                    decoration: InputDecoration(
+                        labelText: 'Card Number',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                          BorderSide(color: HexColor.fromHex("#5E7737")),
+                        )),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter a card number';
                       }
+
+
+                      return null;
+                    },
+                  ),
+                  TextFormField(
+                    cursorColor: HexColor.fromHex("#5E7737"),
+                    controller: _cardHolderController,
+                    decoration: InputDecoration(
+                        labelText: 'Card Holder',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                          BorderSide(color: HexColor.fromHex("#5E7737")),
+                        )),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter a card holder';
+                      }
+
                       return null;
                     },
                   ),
@@ -64,11 +97,14 @@ class _AddCardDialogState extends State<AddCardDialog> {
                     child: AbsorbPointer(
                       child: TextFormField(
                         controller: TextEditingController(
-                          text:  DateFormat('MM/yyyy').format(_expirationDate)
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Expiration Date',
-                        ),
+                            text:
+                            DateFormat('MM/yyyy').format(_expirationDate)),
+                        decoration: InputDecoration(
+                            labelText: 'Expiration Date',
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: HexColor.fromHex("#5E7737")),
+                            )),
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Please select an expiration date';
@@ -81,10 +117,15 @@ class _AddCardDialogState extends State<AddCardDialog> {
                   SizedBox(height: 16),
                   TextFormField(
                     controller: _cvvController,
+                    cursorColor: HexColor.fromHex("#5E7737"),
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                      labelText: 'CVV',
-                    ),
+                        helperStyle: TextStyle(fontWeight: FontWeight.bold),
+                        labelText: 'CVV',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                          BorderSide(color: HexColor.fromHex("#5E7737")),
+                        )),
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'Please enter a CVV';
@@ -92,21 +133,34 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       return null;
                     },
                   ),
-                  TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState?.validate()) {
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
                         // Save the credit card details
                         String cardNumber = _cardNumberController.text;
-                        String expirationDate = _expirationDate.toString();
+                        DateTime expirationDate = _expirationDate;
                         String cvv = _cvvController.text;
+                        String cardHolder = _cardHolderController.text;
+                        final app = Provider.of<AppModel>(
+                            context, listen: false);
+                        PaymentCard newCard = PaymentCard(
+                            uuid: const Uuid().v4(),
+                            number: cardNumber,
+                            cardHolder: cardHolder,
+                            cvv: cvv,
+                            expiryDate: expirationDate);
 
-                        // Perform further actions with the data (e.g., save to database)
-                        // ...
-
-                        Navigator.of(context).pop(); // Close the dialog
+                        await app.addNewCard(context, newCard).then((value) =>
+                            Navigator.of(context).pop()  // Close the dialog
+                        );
                       }
                     },
-                    child: const Text('Save'),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: HexColor.fromHex("#5E7737"),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30))),
+                    child: const Text("Save"),
                   ),
                 ],
               ),
@@ -114,5 +168,4 @@ class _AddCardDialogState extends State<AddCardDialog> {
           ),
         ]);
   }
-
 }

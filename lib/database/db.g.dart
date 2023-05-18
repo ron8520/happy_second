@@ -969,14 +969,362 @@ class CartsCompanion extends UpdateCompanion<CartDB> {
   }
 }
 
+class $PaymentCardsTable extends PaymentCards
+    with TableInfo<$PaymentCardsTable, CardDB> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PaymentCardsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+      'uuid', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 36, maxTextLength: 36),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+      'user_id', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 36, maxTextLength: 36),
+      type: DriftSqlType.string,
+      requiredDuringInsert: true);
+  static const VerificationMeta _expiryDateMeta =
+      const VerificationMeta('expiryDate');
+  @override
+  late final GeneratedColumn<DateTime> expiryDate = GeneratedColumn<DateTime>(
+      'expiry_date', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _cardHolderMeta =
+      const VerificationMeta('cardHolder');
+  @override
+  late final GeneratedColumn<String> cardHolder = GeneratedColumn<String>(
+      'card_holder', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cardNumberMeta =
+      const VerificationMeta('cardNumber');
+  @override
+  late final GeneratedColumn<String> cardNumber = GeneratedColumn<String>(
+      'card_number', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _cvvMeta = const VerificationMeta('cvv');
+  @override
+  late final GeneratedColumn<String> cvv = GeneratedColumn<String>(
+      'cvv', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns =>
+      [uuid, userId, expiryDate, cardHolder, cardNumber, cvv];
+  @override
+  String get aliasedName => _alias ?? 'payment_cards';
+  @override
+  String get actualTableName => 'payment_cards';
+  @override
+  VerificationContext validateIntegrity(Insertable<CardDB> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(_userIdMeta,
+          userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta));
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('expiry_date')) {
+      context.handle(
+          _expiryDateMeta,
+          expiryDate.isAcceptableOrUnknown(
+              data['expiry_date']!, _expiryDateMeta));
+    } else if (isInserting) {
+      context.missing(_expiryDateMeta);
+    }
+    if (data.containsKey('card_holder')) {
+      context.handle(
+          _cardHolderMeta,
+          cardHolder.isAcceptableOrUnknown(
+              data['card_holder']!, _cardHolderMeta));
+    } else if (isInserting) {
+      context.missing(_cardHolderMeta);
+    }
+    if (data.containsKey('card_number')) {
+      context.handle(
+          _cardNumberMeta,
+          cardNumber.isAcceptableOrUnknown(
+              data['card_number']!, _cardNumberMeta));
+    } else if (isInserting) {
+      context.missing(_cardNumberMeta);
+    }
+    if (data.containsKey('cvv')) {
+      context.handle(
+          _cvvMeta, cvv.isAcceptableOrUnknown(data['cvv']!, _cvvMeta));
+    } else if (isInserting) {
+      context.missing(_cvvMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {uuid};
+  @override
+  CardDB map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CardDB(
+      uuid: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}uuid'])!,
+      userId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}user_id'])!,
+      expiryDate: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}expiry_date'])!,
+      cardHolder: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}card_holder'])!,
+      cardNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}card_number'])!,
+      cvv: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}cvv'])!,
+    );
+  }
+
+  @override
+  $PaymentCardsTable createAlias(String alias) {
+    return $PaymentCardsTable(attachedDatabase, alias);
+  }
+}
+
+class CardDB extends DataClass implements Insertable<CardDB> {
+  final String uuid;
+  final String userId;
+  final DateTime expiryDate;
+  final String cardHolder;
+  final String cardNumber;
+  final String cvv;
+  const CardDB(
+      {required this.uuid,
+      required this.userId,
+      required this.expiryDate,
+      required this.cardHolder,
+      required this.cardNumber,
+      required this.cvv});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['uuid'] = Variable<String>(uuid);
+    map['user_id'] = Variable<String>(userId);
+    map['expiry_date'] = Variable<DateTime>(expiryDate);
+    map['card_holder'] = Variable<String>(cardHolder);
+    map['card_number'] = Variable<String>(cardNumber);
+    map['cvv'] = Variable<String>(cvv);
+    return map;
+  }
+
+  PaymentCardsCompanion toCompanion(bool nullToAbsent) {
+    return PaymentCardsCompanion(
+      uuid: Value(uuid),
+      userId: Value(userId),
+      expiryDate: Value(expiryDate),
+      cardHolder: Value(cardHolder),
+      cardNumber: Value(cardNumber),
+      cvv: Value(cvv),
+    );
+  }
+
+  factory CardDB.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CardDB(
+      uuid: serializer.fromJson<String>(json['uuid']),
+      userId: serializer.fromJson<String>(json['userId']),
+      expiryDate: serializer.fromJson<DateTime>(json['expiryDate']),
+      cardHolder: serializer.fromJson<String>(json['cardHolder']),
+      cardNumber: serializer.fromJson<String>(json['cardNumber']),
+      cvv: serializer.fromJson<String>(json['cvv']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'uuid': serializer.toJson<String>(uuid),
+      'userId': serializer.toJson<String>(userId),
+      'expiryDate': serializer.toJson<DateTime>(expiryDate),
+      'cardHolder': serializer.toJson<String>(cardHolder),
+      'cardNumber': serializer.toJson<String>(cardNumber),
+      'cvv': serializer.toJson<String>(cvv),
+    };
+  }
+
+  CardDB copyWith(
+          {String? uuid,
+          String? userId,
+          DateTime? expiryDate,
+          String? cardHolder,
+          String? cardNumber,
+          String? cvv}) =>
+      CardDB(
+        uuid: uuid ?? this.uuid,
+        userId: userId ?? this.userId,
+        expiryDate: expiryDate ?? this.expiryDate,
+        cardHolder: cardHolder ?? this.cardHolder,
+        cardNumber: cardNumber ?? this.cardNumber,
+        cvv: cvv ?? this.cvv,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('CardDB(')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('expiryDate: $expiryDate, ')
+          ..write('cardHolder: $cardHolder, ')
+          ..write('cardNumber: $cardNumber, ')
+          ..write('cvv: $cvv')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(uuid, userId, expiryDate, cardHolder, cardNumber, cvv);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CardDB &&
+          other.uuid == this.uuid &&
+          other.userId == this.userId &&
+          other.expiryDate == this.expiryDate &&
+          other.cardHolder == this.cardHolder &&
+          other.cardNumber == this.cardNumber &&
+          other.cvv == this.cvv);
+}
+
+class PaymentCardsCompanion extends UpdateCompanion<CardDB> {
+  final Value<String> uuid;
+  final Value<String> userId;
+  final Value<DateTime> expiryDate;
+  final Value<String> cardHolder;
+  final Value<String> cardNumber;
+  final Value<String> cvv;
+  final Value<int> rowid;
+  const PaymentCardsCompanion({
+    this.uuid = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.expiryDate = const Value.absent(),
+    this.cardHolder = const Value.absent(),
+    this.cardNumber = const Value.absent(),
+    this.cvv = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  PaymentCardsCompanion.insert({
+    required String uuid,
+    required String userId,
+    required DateTime expiryDate,
+    required String cardHolder,
+    required String cardNumber,
+    required String cvv,
+    this.rowid = const Value.absent(),
+  })  : uuid = Value(uuid),
+        userId = Value(userId),
+        expiryDate = Value(expiryDate),
+        cardHolder = Value(cardHolder),
+        cardNumber = Value(cardNumber),
+        cvv = Value(cvv);
+  static Insertable<CardDB> custom({
+    Expression<String>? uuid,
+    Expression<String>? userId,
+    Expression<DateTime>? expiryDate,
+    Expression<String>? cardHolder,
+    Expression<String>? cardNumber,
+    Expression<String>? cvv,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (uuid != null) 'uuid': uuid,
+      if (userId != null) 'user_id': userId,
+      if (expiryDate != null) 'expiry_date': expiryDate,
+      if (cardHolder != null) 'card_holder': cardHolder,
+      if (cardNumber != null) 'card_number': cardNumber,
+      if (cvv != null) 'cvv': cvv,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  PaymentCardsCompanion copyWith(
+      {Value<String>? uuid,
+      Value<String>? userId,
+      Value<DateTime>? expiryDate,
+      Value<String>? cardHolder,
+      Value<String>? cardNumber,
+      Value<String>? cvv,
+      Value<int>? rowid}) {
+    return PaymentCardsCompanion(
+      uuid: uuid ?? this.uuid,
+      userId: userId ?? this.userId,
+      expiryDate: expiryDate ?? this.expiryDate,
+      cardHolder: cardHolder ?? this.cardHolder,
+      cardNumber: cardNumber ?? this.cardNumber,
+      cvv: cvv ?? this.cvv,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (expiryDate.present) {
+      map['expiry_date'] = Variable<DateTime>(expiryDate.value);
+    }
+    if (cardHolder.present) {
+      map['card_holder'] = Variable<String>(cardHolder.value);
+    }
+    if (cardNumber.present) {
+      map['card_number'] = Variable<String>(cardNumber.value);
+    }
+    if (cvv.present) {
+      map['cvv'] = Variable<String>(cvv.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PaymentCardsCompanion(')
+          ..write('uuid: $uuid, ')
+          ..write('userId: $userId, ')
+          ..write('expiryDate: $expiryDate, ')
+          ..write('cardHolder: $cardHolder, ')
+          ..write('cardNumber: $cardNumber, ')
+          ..write('cvv: $cvv, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   late final $UsersTable users = $UsersTable(this);
   late final $ProductsTable products = $ProductsTable(this);
   late final $CartsTable carts = $CartsTable(this);
+  late final $PaymentCardsTable paymentCards = $PaymentCardsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [users, products, carts];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [users, products, carts, paymentCards];
 }

@@ -15,52 +15,72 @@ class User {
   List<PaymentCard>? cards;
   List<Product>? cart;
 
-  User({
-    required this.uuid,
+  User({required this.uuid,
     required this.username,
     required this.emailAddress,
     required this.password,
     required this.usertype,
     this.cart,
-    this.cards
-  });
+    this.cards});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
-  UsersCompanion toUsersCompanion() => UsersCompanion(
-      uuid: Value(uuid),
-      username: Value(username),
-      emailAddress: Value(emailAddress),
-      password: Value(password),
-      userType: Value(usertype),
-  );
+  UsersCompanion toUsersCompanion() =>
+      UsersCompanion(
+        uuid: Value(uuid),
+        username: Value(username),
+        emailAddress: Value(emailAddress),
+        password: Value(password),
+        userType: Value(usertype),
+      );
 
-  factory User.fromDB(UsersDB user, {List<ProductDB>? carts}) => User(
-      uuid: user.uuid,
-      username: user.username,
-      emailAddress: user.emailAddress,
-      password: user.password,
-      usertype: user.userType,
-      cart: carts != null ?
-        carts.map((i) => Product.fromDB(i)).toList() : []
-  );
+  factory User.fromDB(UsersDB user,
+      {List<ProductDB>? carts, List<CardDB>? cards}) =>
+      User(
+          uuid: user.uuid,
+          username: user.username,
+          emailAddress: user.emailAddress,
+          password: user.password,
+          usertype: user.userType,
+          cart: carts != null ? carts.map((i) => Product.fromDB(i)).toList()
+              : [],
+          cards: cards != null ? cards.map((i) => PaymentCard.fromDB(i))
+              .toList() : []
+      );
 }
 
 @JsonSerializable()
 class PaymentCard {
+  final String uuid;
   final String number;
   final String cardHolder;
+  final String cvv;
+  final DateTime expiryDate;
   bool selected;
 
-  PaymentCard(
-      {required this.number, required this.cardHolder, this.selected = false});
+  PaymentCard({
+    required this.uuid,
+    required this.number,
+    required this.cardHolder,
+    required this.cvv,
+    required this.expiryDate,
+    this.selected = false,
+  });
 
   factory PaymentCard.fromJson(Map<String, dynamic> json) =>
       _$PaymentCardFromJson(json);
 
   Map<String, dynamic> toJson() => _$PaymentCardToJson(this);
+
+  factory PaymentCard.fromDB(CardDB card) =>
+      PaymentCard(
+          uuid: card.uuid,
+          number: card.cardNumber,
+          cardHolder: card.cardHolder,
+          cvv: card.cvv,
+          expiryDate: card.expiryDate);
 }
 
 enum UserType { normal, seller }

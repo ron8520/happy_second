@@ -46,23 +46,27 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => AppModel(userId: userId)),
           ChangeNotifierProvider(create: (context) => SearchModel())
         ],
-          child:  MaterialApp(
-              routes: {
-                '/login': (context) => LoginPage(),
-                '/paymentSuccess': (context) => PaymentSuccessPage(),
-                '/becomeSeller': (context) => SubscribePage(),
-                '/uploadItem': (context) => UploadProductPage(),
-                '/myorders': (context) => OrderHistoryPage(),
-                '/mycards': (context) => CardPage(),
-                '/personalDetail': (context) => PersonalDetailPage(name: "name", email: "email", contactNumber: "contactNumber", address: "address", password: "password")
-              },
-              builder: EasyLoading.init(),
-              theme: ThemeData(
-                  textSelectionTheme: TextSelectionThemeData(
-                      cursorColor: HexColor.fromHex("#5E7737"))),
-              debugShowCheckedModeBanner: false,
-              home: MainPage())
-    );
+        child: MaterialApp(
+            routes: {
+              '/login': (context) => LoginPage(),
+              '/paymentSuccess': (context) => PaymentSuccessPage(),
+              '/becomeSeller': (context) => SubscribePage(),
+              '/uploadItem': (context) => UploadProductPage(),
+              '/myorders': (context) => OrderHistoryPage(),
+              '/mycards': (context) => CardPage(),
+              '/personalDetail': (context) => PersonalDetailPage(
+                  name: "name",
+                  email: "email",
+                  contactNumber: "contactNumber",
+                  address: "address",
+                  password: "password")
+            },
+            builder: EasyLoading.init(),
+            theme: ThemeData(
+                textSelectionTheme: TextSelectionThemeData(
+                    cursorColor: HexColor.fromHex("#5E7737"))),
+            debugShowCheckedModeBanner: false,
+            home: MainPage()));
   }
 }
 
@@ -110,6 +114,8 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final search = Provider.of<SearchModel>(context, listen: true);
+    final user = Provider.of<AppModel>(context, listen: true).currentUser!;
+
     final _title = <Widget>[
       const Image(
           width: 70, height: 70, image: AssetImage("lib/assets/logo.jpg")),
@@ -148,17 +154,19 @@ class _MainPageState extends State<MainPage> {
             child: Icon(Icons.person, color: Colors.white),
           )),
       const SizedBox(),
-      Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: IconButton(
-            iconSize: 30,
-            icon: Icon(Icons.delete, color: HexColor.fromHex("#5E7737")),
-            onPressed: () async {
-              final app = Provider.of<AppModel>(context, listen: false);
-              await app.removeAllCartItems(context);
-              EasyLoading.showSuccess("Remove all items successfully!");
-            },
-          )),
+      user.cart!.isEmpty
+          ? const SizedBox()
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: IconButton(
+                iconSize: 30,
+                icon: Icon(Icons.delete, color: HexColor.fromHex("#5E7737")),
+                onPressed: () async {
+                  final app = Provider.of<AppModel>(context, listen: false);
+                  await app.removeAllCartItems(context);
+                  EasyLoading.showSuccess("Remove all items successfully!");
+                },
+              )),
       const SizedBox()
     ];
 
