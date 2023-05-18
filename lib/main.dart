@@ -11,8 +11,9 @@ import 'package:happy_second/routes/home.dart';
 import 'package:happy_second/routes/login.dart';
 import 'package:happy_second/routes/myCard.dart';
 import 'package:happy_second/routes/myorder.dart';
-import 'package:happy_second/routes/search.dart';
+import 'package:happy_second/routes/searchView.dart';
 import 'package:happy_second/states/app.dart';
+import 'package:happy_second/states/search.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
 import 'package:provider/provider.dart';
@@ -43,8 +44,8 @@ class MyApp extends StatelessWidget {
             create: (context) => AppDatabase(),
             dispose: (context, db) => db.close(),
           ),
-          ChangeNotifierProvider(
-              create: (context) => AppModel(userId: userId))
+          ChangeNotifierProvider(create: (context) => AppModel(userId: userId)),
+          ChangeNotifierProvider(create: (context) => SearchModel())
         ],
         child: MaterialApp(
             routes: {
@@ -72,8 +73,6 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int index = 0;
-  static final TextEditingController _searchController =
-      TextEditingController();
 
   Widget? callPage() {
     if (index == 0) {
@@ -92,6 +91,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     fetchUserInfo();
+    fetchAllProducts();
     super.initState();
   }
 
@@ -100,8 +100,14 @@ class _MainPageState extends State<MainPage> {
     await app.fetchUserDetails(context);
   }
 
+  Future<void> fetchAllProducts() async {
+    final search = Provider.of<SearchModel>(context, listen: false);
+    await search.fetchAllProducts(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final search = Provider.of<SearchModel>(context, listen: true);
     final _title = <Widget>[
       const Image(
           width: 70, height: 70, image: AssetImage("lib/assets/logo.jpg")),
@@ -109,7 +115,11 @@ class _MainPageState extends State<MainPage> {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20), color: Colors.grey[200]),
         child: TextField(
-          controller: _searchController,
+          controller: search.searchController,
+          onChanged: (value) async {
+            // Implement logic to update search results based on the input.
+            await search.searchProducts(context, value);
+          },
           decoration: InputDecoration(
             hintText: "Search...",
             prefixIcon: Icon(Icons.search, color: HexColor.fromHex("#5E7737")),
@@ -151,7 +161,7 @@ class _MainPageState extends State<MainPage> {
           child: IconButton(
             iconSize: 30,
             icon: Icon(Icons.delete, color: HexColor.fromHex("#5E7737")),
-            onPressed: ()  async {
+            onPressed: () async {
               final app = Provider.of<AppModel>(context, listen: false);
               await app.removeAllCartItems(context);
               EasyLoading.showSuccess("Remove all items successfully!");
