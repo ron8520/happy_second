@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../componets/checkout/paymentCard.dart';
+import '../componets/dialog/addCard.dart';
 import '../model/user.dart';
 import '../utils/hexColor.dart';
 
@@ -18,10 +19,6 @@ class _CardPageState extends State<CardPage> {
     PaymentCard(number: "1234 5678 9012 3333", cardHolder: "Wangzainiunai"),
   ];
 
-  final List<Widget> cardView = [
-
-  ];
-
   void _toggleSelectionMode() {
     setState(() {
       _selectionMode = !_selectionMode;
@@ -37,6 +34,15 @@ class _CardPageState extends State<CardPage> {
       _cards.removeWhere((card) => card.selected);
       _selectionMode = false;
     });
+  }
+
+  void addNewCardDialog() async {
+    await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AddCardDialog();
+      },
+    );
   }
 
   @override
@@ -77,7 +83,7 @@ class _CardPageState extends State<CardPage> {
                           });
                         },
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
                 Expanded(child: PaymentCardView(paymentCard: _cards[index]))
               ],
             ),
@@ -85,7 +91,7 @@ class _CardPageState extends State<CardPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _toggleSelectionMode,
+        onPressed: addNewCardDialog,
         backgroundColor: HexColor.fromHex("#5E7737"),
         child: const Icon(Icons.add),
       ),
