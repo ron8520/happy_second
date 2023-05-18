@@ -184,6 +184,16 @@ class AppDatabase extends _$AppDatabase {
           .go();
     });
   }
+  Future<void> deleteAllCartItems(String userId) async {
+    return transaction(() async {
+      await (delete(carts)
+          ..where(
+              (t) => t.userId.equals(userId)
+          )
+      ).go();
+    });
+  }
+
 
   Future<User?> findUser(String username) async {
     try {
@@ -247,4 +257,5 @@ class AppDatabase extends _$AppDatabase {
       return null;
     }
   }
+
 }

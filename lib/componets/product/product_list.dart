@@ -6,7 +6,10 @@ import 'package:provider/provider.dart';
 import '../../model/product.dart';
 
 class ProductList extends StatefulWidget {
-  const ProductList({super.key});
+  Category? category;
+  SubCategory? subCategory;
+
+  ProductList({super.key, this.category, this.subCategory});
 
   @override
   State<StatefulWidget> createState() => _ProductListState();
@@ -25,7 +28,7 @@ class _ProductListState extends State<ProductList> {
     final db = Provider.of<AppDatabase>(context, listen: false);
     final productList = await db.findProducts();
     setState(() {
-      items = productList ?? [];
+        items = productList ?? [];
     });
   }
 

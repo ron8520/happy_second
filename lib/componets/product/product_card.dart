@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/componets/product/product_detail.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ class ProductCard extends StatelessWidget {
         builder: (context) => const LoginPage(),
       ));
     }else{
+      EasyLoading.showSuccess("Add to Cart Successfully!");
       final app = Provider.of<AppModel>(context, listen: false);
       app.addToCart(context, product);
     }

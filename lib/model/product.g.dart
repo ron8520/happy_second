@@ -34,6 +34,7 @@ const _$CategoryEnumMap = {
 };
 
 const _$SubCategoryEnumMap = {
+  SubCategory.all: 'all',
   SubCategory.plastic: 'plastic',
   SubCategory.plush: 'plush',
   SubCategory.wooden: 'wooden',

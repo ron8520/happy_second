@@ -56,7 +56,7 @@ class _CartPageState extends State<CartPage> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => ProductDetail(product: cartItem!)),
+                                        builder: (context) => ProductDetail(product: cartItem)),
                                   );
                                 },
                                 child: Container(
@@ -74,7 +74,7 @@ class _CartPageState extends State<CartPage> {
                                               height: 100,
                                               width: 100,
                                               image: AssetImage(
-                                                  cartItem!.imageUrl!)),
+                                                  cartItem.imageUrl!)),
                                         ))
                                       ],
                                     ))),

@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:happy_second/utils/hexColor.dart';
+import 'package:provider/provider.dart';
 
 import '../../model/product.dart';
+import '../../routes/login.dart';
+import '../../states/app.dart';
+import '../../utils/storage/sharedPreferences_util.dart';
 
 class ProductDetail extends StatelessWidget {
   Product product;
 
-  ProductDetail({required this.product});
+  ProductDetail({super.key, required this.product});
+
+  void _handleAddToCart(BuildContext context) {
+    if (SharedPreferencesUtil.preferences.getString("userId") == null) {
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ));
+    } else {
+      EasyLoading.showSuccess("Add to Cart Successfully!");
+      final app = Provider.of<AppModel>(context, listen: false);
+      app.addToCart(context, product);
+      Navigator.pushNamed(context, '/');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +132,8 @@ class ProductDetail extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Expanded(child: Text(
+                    Expanded(
+                        child: Text(
                       product.description,
                       style: TextStyle(
                         fontSize: 14.0,
@@ -126,13 +144,8 @@ class ProductDetail extends StatelessWidget {
                   ],
                 ),
                 SizedBox(height: 10),
-
                 ElevatedButton(
-                  onPressed: () {
-                    // Handle checkout logic here
-                    EasyLoading.showSuccess("Successfully add to cart");
-                    Navigator.pushNamed(context, '/');
-                  },
+                  onPressed: () => _handleAddToCart(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: HexColor.fromHex("#5E7737"),
                     fixedSize: const Size(400, 40),
@@ -142,7 +155,8 @@ class ProductDetail extends StatelessWidget {
                     ),
                   ),
                   child: const Text('Add to Cart',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 )
               ],
             ),

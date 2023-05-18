@@ -50,6 +50,7 @@ enum Category {
 }
 
 enum SubCategory{
+  all,
   plastic,
   plush,
   wooden,

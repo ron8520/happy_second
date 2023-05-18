@@ -151,8 +151,10 @@ class _MainPageState extends State<MainPage> {
           child: IconButton(
             iconSize: 30,
             icon: Icon(Icons.delete, color: HexColor.fromHex("#5E7737")),
-            onPressed: () {
-              print("Delete all");
+            onPressed: ()  async {
+              final app = Provider.of<AppModel>(context, listen: false);
+              await app.removeAllCartItems(context);
+              EasyLoading.showSuccess("Remove all items successfully!");
             },
           )),
       const SizedBox()

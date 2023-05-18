@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
         child: Padding(
       padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
       child: Column(
-        children: const [
+        children: [
           ProductList()
         ],
       ),
