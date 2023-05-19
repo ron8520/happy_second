@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../componets/checkout/paymentCardList.dart';
 import '../componets/checkout/paymentSuccess.dart';
+import '../states/app.dart';
 import '../utils/hexColor.dart';
 import 'myorder.dart';
 
@@ -288,9 +290,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             const SizedBox(height: 20.0),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Handle checkout logic here
-                Navigator.pushNamed(context, '/paymentSuccess');
+                final app = Provider.of<AppModel>(context, listen: false);
+                await app.checkout(context).then(
+                    (value) => Navigator.pushNamed(context, '/paymentSuccess'));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: HexColor.fromHex("#5E7737"),

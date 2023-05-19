@@ -88,4 +88,10 @@ class AppModel extends ChangeNotifier {
       EasyLoading.showSuccess("Remove card Successfully!");
     }
   }
+
+  Future<void> checkout(BuildContext context) async {
+    if(currentUser != null){
+      await removeAllCartItems(context);
+    }
+  }
 }

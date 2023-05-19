@@ -114,7 +114,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final search = Provider.of<SearchModel>(context, listen: true);
-    final user = Provider.of<AppModel>(context, listen: true).currentUser!;
+    final user = Provider.of<AppModel>(context, listen: true).currentUser;
 
     final _title = <Widget>[
       const Image(
@@ -154,9 +154,8 @@ class _MainPageState extends State<MainPage> {
             child: Icon(Icons.person, color: Colors.white),
           )),
       const SizedBox(),
-      user.cart!.isEmpty
-          ? const SizedBox()
-          : Padding(
+      user != null && !user.cart!.isEmpty
+          ? Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
               child: IconButton(
                 iconSize: 30,
@@ -166,7 +165,8 @@ class _MainPageState extends State<MainPage> {
                   await app.removeAllCartItems(context);
                   EasyLoading.showSuccess("Remove all items successfully!");
                 },
-              )),
+              ))
+          : const SizedBox(),
       const SizedBox()
     ];
 

@@ -3,7 +3,6 @@ import 'package:happy_second/componets/checkout/paymentCard.dart';
 import 'package:happy_second/utils/hexColor.dart';
 import 'package:provider/provider.dart';
 
-import '../../model/user.dart';
 import '../../states/app.dart';
 import '../dialog/addCard.dart';
 
