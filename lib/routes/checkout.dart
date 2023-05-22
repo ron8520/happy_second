@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../componets/checkout/paymentCardList.dart';
 import '../componets/checkout/paymentSuccess.dart';
+import '../model/product.dart';
 import '../states/app.dart';
 import '../utils/hexColor.dart';
 import 'myorder.dart';
@@ -15,6 +16,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
   String personName = 'John Doe';
   String address = '123 Main St, City, Postal Code';
   String phoneNumber = '123-456-7890';
+
+  double getTotalPrice(List<Product> products) {
+    double totalPrice = 0.0;
+    for (Product product in products) {
+      totalPrice += product.price;
+    }
+    return totalPrice;
+  }
 
   void editAddress() async {
     final updatedAddress = await showDialog<String>(
@@ -89,6 +98,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<AppModel>(context, listen: true).currentUser!;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Checkout",
@@ -189,10 +199,10 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       color: Colors.grey),
                 ),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$20.0 ',
+                        text: '\$${getTotalPrice(user.cart!).toStringAsFixed(2)} ',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -267,16 +277,16 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$170.00 ',
-                        style: TextStyle(
+                        text: '\$${(getTotalPrice(user.cart!) + 5).toStringAsFixed(2)} ',
+                        style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Colors.black),
                       ),
-                      TextSpan(
+                      const TextSpan(
                         text: 'AUD',
                         style: TextStyle(
                             fontSize: 16,
