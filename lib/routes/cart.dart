@@ -32,7 +32,7 @@ class _CartPageState extends State<CartPage> {
     final app = Provider.of<AppModel>(context, listen: true);
     final user = app.currentUser!;
 
-    if (user.cart?.isEmpty ?? true) {
+    if (user.cart!.isEmpty ?? true) {
       return const Center(
         child: Text("Cart is Empty, Enjoy shopping !", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0)),
       );

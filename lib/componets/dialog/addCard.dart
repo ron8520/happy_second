@@ -67,8 +67,13 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       if (value!.isEmpty) {
                         return 'Please enter a card number';
                       }
-
-
+                      final number = int.tryParse(value);
+                      if (number == null) {
+                        return 'Invalid number';
+                      }
+                      if(value.length != 16){
+                        return 'Card number must 16 digit number';
+                      }
                       return null;
                     },
                   ),
@@ -114,7 +119,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   TextFormField(
                     controller: _cvvController,
                     cursorColor: HexColor.fromHex("#5E7737"),
@@ -130,9 +135,17 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       if (value!.isEmpty) {
                         return 'Please enter a CVV';
                       }
+                      final number = int.tryParse(value);
+                      if (number == null) {
+                        return 'Invalid CVV';
+                      }
+                      if(value.length != 3){
+                        return 'Card number must 3 digit number';
+                      }
                       return null;
                     },
                   ),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
@@ -156,6 +169,7 @@ class _AddCardDialogState extends State<AddCardDialog> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(300, 40),
                         backgroundColor: HexColor.fromHex("#5E7737"),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(

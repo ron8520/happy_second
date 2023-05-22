@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../model/user.dart';
 import '../../utils/hexColor.dart';
@@ -34,6 +35,8 @@ class _PaymentCardViewState extends State<PaymentCardView> {
 
   @override
   Widget build(BuildContext context) {
+    DateFormat dateFormat = DateFormat('MM/yyyy');
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Container(
@@ -48,7 +51,7 @@ class _PaymentCardViewState extends State<PaymentCardView> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Image(
+                   const Image(
                     width: 70,
                     height: 70,
                     image: AssetImage("lib/assets/bank/westpac.png"),
@@ -56,9 +59,9 @@ class _PaymentCardViewState extends State<PaymentCardView> {
                   Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("EXPIRED", style: TextStyle(color: Colors.white)),
-                        Text("01/26", style: TextStyle(color: Colors.white))
+                      children:  [
+                        const Text("EXPIRED", style: TextStyle(color: Colors.white)),
+                        Text(dateFormat.format(widget.paymentCard.expiryDate), style: TextStyle(color: Colors.white))
                       ])
                 ],
               ),
@@ -67,7 +70,7 @@ class _PaymentCardViewState extends State<PaymentCardView> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "${widget.paymentCard.number}",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0,
                       color: Colors.white),
