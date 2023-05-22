@@ -7,14 +7,15 @@ part of 'product.dart';
 // **************************************************************************
 
 Product _$ProductFromJson(Map<String, dynamic> json) => Product(
-      json['uuid'] as String,
-      json['name'] as String,
-      json['brand'] as String,
-      json['description'] as String,
-      json['price'] as int,
-      $enumDecode(_$CategoryEnumMap, json['category']),
-      $enumDecode(_$SubCategoryEnumMap, json['subCategory']),
-      json['imageUrl'] as String?,
+      uuid: json['uuid'] as String,
+      name: json['name'] as String,
+      brand: json['brand'] as String,
+      description: json['description'] as String,
+      price: json['price'] as int,
+      category: $enumDecode(_$CategoryEnumMap, json['category']),
+      subCategory: $enumDecode(_$SubCategoryEnumMap, json['subCategory']),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      imageUrl: json['imageUrl'] as String?,
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
@@ -26,6 +27,7 @@ Map<String, dynamic> _$ProductToJson(Product instance) => <String, dynamic>{
       'category': _$CategoryEnumMap[instance.category]!,
       'subCategory': _$SubCategoryEnumMap[instance.subCategory]!,
       'imageUrl': instance.imageUrl,
+      'createdAt': instance.createdAt.toIso8601String(),
     };
 
 const _$CategoryEnumMap = {

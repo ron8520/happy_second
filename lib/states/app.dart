@@ -11,8 +11,19 @@ import '../model/user.dart';
 class AppModel extends ChangeNotifier {
   User? currentUser;
   String? userId;
-
+  List<Product> items = [];
   AppModel({this.userId});
+
+  Future<void> fetchProducts(BuildContext context) async {
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    final productList = await db.findProducts();
+
+    if(productList != null) {
+      productList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    }
+    items = productList ?? [];
+    notifyListeners();
+  }
 
   Future<void> addToCart(BuildContext context, Product product) async {
     if (currentUser == null) {
@@ -124,6 +135,12 @@ class AppModel extends ChangeNotifier {
         password: Value(currentUser!.password),
         userType: const Value(UserType.seller)
     ));
+    notifyListeners();
+  }
+
+  Future<void> uploadNewItem(BuildContext context, Product newProduct) async {
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    await db.createProduct(newProduct.toProductsCompanion());
     notifyListeners();
   }
 }

@@ -4,6 +4,7 @@ import 'package:happy_second/database/db.dart';
 import 'package:provider/provider.dart';
 
 import '../../model/product.dart';
+import '../../states/app.dart';
 
 class ProductList extends StatefulWidget {
   Category? category;
@@ -16,24 +17,16 @@ class ProductList extends StatefulWidget {
 }
 
 class _ProductListState extends State<ProductList> {
-  List<Product> items = [];
 
   @override
   void initState() {
     super.initState();
-    fetchProducts();
   }
 
-  Future<void> fetchProducts() async {
-    final db = Provider.of<AppDatabase>(context, listen: false);
-    final productList = await db.findProducts();
-    setState(() {
-        items = productList ?? [];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
+    final items = Provider.of<AppModel>(context, listen: true).items;
     return items.isEmpty
         ? const Center(
             child: Text("No items"),

@@ -411,9 +411,24 @@ class $ProductsTable extends Products
   late final GeneratedColumn<String> image = GeneratedColumn<String>(
       'image', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
   @override
-  List<GeneratedColumn> get $columns =>
-      [uuid, name, brand, description, price, subCategory, category, image];
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        uuid,
+        name,
+        brand,
+        description,
+        price,
+        subCategory,
+        category,
+        image,
+        createdAt
+      ];
   @override
   String get aliasedName => _alias ?? 'products';
   @override
@@ -461,6 +476,12 @@ class $ProductsTable extends Products
       context.handle(
           _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
     }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
     return context;
   }
 
@@ -488,6 +509,8 @@ class $ProductsTable extends Products
           .read(DriftSqlType.int, data['${effectivePrefix}category'])!),
       image: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}image']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -511,6 +534,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
   final SubCategory subCategory;
   final Category category;
   final String? image;
+  final DateTime createdAt;
   const ProductDB(
       {required this.uuid,
       required this.name,
@@ -519,7 +543,8 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
       required this.price,
       required this.subCategory,
       required this.category,
-      this.image});
+      this.image,
+      required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -539,6 +564,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
     if (!nullToAbsent || image != null) {
       map['image'] = Variable<String>(image);
     }
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -553,6 +579,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
       category: Value(category),
       image:
           image == null && nullToAbsent ? const Value.absent() : Value(image),
+      createdAt: Value(createdAt),
     );
   }
 
@@ -570,6 +597,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
       category: $ProductsTable.$convertercategory
           .fromJson(serializer.fromJson<int>(json['category'])),
       image: serializer.fromJson<String?>(json['image']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
@@ -586,6 +614,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
       'category': serializer
           .toJson<int>($ProductsTable.$convertercategory.toJson(category)),
       'image': serializer.toJson<String?>(image),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
@@ -597,7 +626,8 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
           int? price,
           SubCategory? subCategory,
           Category? category,
-          Value<String?> image = const Value.absent()}) =>
+          Value<String?> image = const Value.absent(),
+          DateTime? createdAt}) =>
       ProductDB(
         uuid: uuid ?? this.uuid,
         name: name ?? this.name,
@@ -607,6 +637,7 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
         subCategory: subCategory ?? this.subCategory,
         category: category ?? this.category,
         image: image.present ? image.value : this.image,
+        createdAt: createdAt ?? this.createdAt,
       );
   @override
   String toString() {
@@ -618,14 +649,15 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
           ..write('price: $price, ')
           ..write('subCategory: $subCategory, ')
           ..write('category: $category, ')
-          ..write('image: $image')
+          ..write('image: $image, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-      uuid, name, brand, description, price, subCategory, category, image);
+  int get hashCode => Object.hash(uuid, name, brand, description, price,
+      subCategory, category, image, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -637,7 +669,8 @@ class ProductDB extends DataClass implements Insertable<ProductDB> {
           other.price == this.price &&
           other.subCategory == this.subCategory &&
           other.category == this.category &&
-          other.image == this.image);
+          other.image == this.image &&
+          other.createdAt == this.createdAt);
 }
 
 class ProductsCompanion extends UpdateCompanion<ProductDB> {
@@ -649,6 +682,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
   final Value<SubCategory> subCategory;
   final Value<Category> category;
   final Value<String?> image;
+  final Value<DateTime> createdAt;
   final Value<int> rowid;
   const ProductsCompanion({
     this.uuid = const Value.absent(),
@@ -659,6 +693,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
     this.subCategory = const Value.absent(),
     this.category = const Value.absent(),
     this.image = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProductsCompanion.insert({
@@ -670,6 +705,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
     required SubCategory subCategory,
     required Category category,
     this.image = const Value.absent(),
+    required DateTime createdAt,
     this.rowid = const Value.absent(),
   })  : uuid = Value(uuid),
         name = Value(name),
@@ -677,7 +713,8 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
         description = Value(description),
         price = Value(price),
         subCategory = Value(subCategory),
-        category = Value(category);
+        category = Value(category),
+        createdAt = Value(createdAt);
   static Insertable<ProductDB> custom({
     Expression<String>? uuid,
     Expression<String>? name,
@@ -687,6 +724,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
     Expression<int>? subCategory,
     Expression<int>? category,
     Expression<String>? image,
+    Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -698,6 +736,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
       if (subCategory != null) 'sub_category': subCategory,
       if (category != null) 'category': category,
       if (image != null) 'image': image,
+      if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -711,6 +750,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
       Value<SubCategory>? subCategory,
       Value<Category>? category,
       Value<String?>? image,
+      Value<DateTime>? createdAt,
       Value<int>? rowid}) {
     return ProductsCompanion(
       uuid: uuid ?? this.uuid,
@@ -721,6 +761,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
       subCategory: subCategory ?? this.subCategory,
       category: category ?? this.category,
       image: image ?? this.image,
+      createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -754,6 +795,9 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
     if (image.present) {
       map['image'] = Variable<String>(image.value);
     }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -771,6 +815,7 @@ class ProductsCompanion extends UpdateCompanion<ProductDB> {
           ..write('subCategory: $subCategory, ')
           ..write('category: $category, ')
           ..write('image: $image, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();

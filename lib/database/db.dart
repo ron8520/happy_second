@@ -50,6 +50,9 @@ class Products extends Table {
 
   TextColumn get image => text().nullable()();
 
+  DateTimeColumn get createdAt => dateTime()();
+
+
   @override
   Set<Column> get primaryKey => {uuid};
 }
@@ -79,7 +82,6 @@ class PaymentCards extends Table {
   TextColumn get cardNumber => text()();
 
   TextColumn get cvv => text()();
-
 
   @override
   Set<Column> get primaryKey => {uuid};
@@ -126,7 +128,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 50,
                 subCategory: SubCategory.plastic,
                 category: Category.toys,
-                image: const Value("lib/assets/product/shanyi.png")),
+                image: const Value("lib/assets/product/shanyi.png"),
+                createdAt: DateTime.now()),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Demon Slayer - Kamado Tanjirou",
@@ -136,7 +139,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 70,
                 subCategory: SubCategory.wooden,
                 category: Category.toys,
-                image: const Value("lib/assets/product/tanzhilang.png")),
+                image: const Value("lib/assets/product/tanzhilang.png"),
+                createdAt: DateTime.now()),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Demon Slayer - Hashibira Inosuke",
@@ -146,7 +150,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 60,
                 subCategory: SubCategory.plush,
                 category: Category.toys,
-                image: const Value("lib/assets/product/yizhizhu.png")),
+                image: const Value("lib/assets/product/yizhizhu.png"),
+                createdAt: DateTime.now()),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Solid Button Front Dress",
@@ -156,7 +161,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 200,
                 subCategory: SubCategory.women,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/dress.png")),
+                image: const Value("lib/assets/product/dress.png"),
+                createdAt: DateTime.now()),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Brown Cotton Jumper",
@@ -166,7 +172,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 80,
                 subCategory: SubCategory.men,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/jacket.png")),
+                image: const Value("lib/assets/product/jacket.png"),
+                createdAt: DateTime.now()),
             ProductsCompanion.insert(
                 uuid: const Uuid().v4(),
                 name: "Sky Blue Blazer",
@@ -176,7 +183,8 @@ class AppDatabase extends _$AppDatabase {
                 price: 30,
                 subCategory: SubCategory.children,
                 category: Category.clothes,
-                image: const Value("lib/assets/product/baby.png"))
+                image: const Value("lib/assets/product/baby.png"),
+                createdAt: DateTime.now())
           ]);
         });
       },
@@ -188,6 +196,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> createUser(UsersCompanion user) async {
     return transaction(() async {
       await into(users).insert(user);
+    });
+  }
+
+  Future<void> createProduct(ProductsCompanion product) async {
+    return transaction(() async {
+      await into(products).insert(product);
     });
   }
 
@@ -206,8 +220,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> deletePaymentCard(String userId, String cardId) async {
     return transaction(() async {
       await (delete(paymentCards)
-        ..where(
-                (t) => t.userId.equals(userId) & t.uuid.equals(cardId)))
+            ..where((t) => t.userId.equals(userId) & t.uuid.equals(cardId)))
           .go();
     });
   }
@@ -223,14 +236,9 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> deleteAllCartItems(String userId) async {
     return transaction(() async {
-      await (delete(carts)
-          ..where(
-              (t) => t.userId.equals(userId)
-          )
-      ).go();
+      await (delete(carts)..where((t) => t.userId.equals(userId))).go();
     });
   }
-
 
   Future<User?> findUser(String username) async {
     try {
@@ -251,17 +259,19 @@ class AppDatabase extends _$AppDatabase {
           .getSingle();
 
       final cartItems = await (select(carts)
-        ..where((item) => item.userId.equals(user.uuid)))
+            ..where((item) => item.userId.equals(user.uuid)))
           .get();
 
-      final productIds = cartItems.map((cartItem) => cartItem.productId).toList();
+      final productIds =
+          cartItems.map((cartItem) => cartItem.productId).toList();
 
       final product = await (select(products)
-        ..where((item) => item.uuid.isIn(productIds))).get();
+            ..where((item) => item.uuid.isIn(productIds)))
+          .get();
 
       final cards = await (select(paymentCards)
-          ..where((item) => item.userId.equals(user.uuid))
-      ).get();
+            ..where((item) => item.userId.equals(user.uuid)))
+          .get();
 
       return User.fromDB(user, carts: product, cards: cards);
     } catch (e) {
@@ -280,37 +290,33 @@ class AppDatabase extends _$AppDatabase {
 
   Future<User?> findUserById(String id) async {
     try {
-      final user = await (select(users)
-        ..where((item) => item.uuid.equals(id)))
+      final user = await (select(users)..where((item) => item.uuid.equals(id)))
           .getSingle();
 
-      final cartItems = await (select(carts)
-          ..where((item) => item.userId.equals(id)))
-          .get();
+      final cartItems =
+          await (select(carts)..where((item) => item.userId.equals(id))).get();
 
-      final productIds = cartItems.map((cartItem) => cartItem.productId).toList();
+      final productIds =
+          cartItems.map((cartItem) => cartItem.productId).toList();
 
       final product = await (select(products)
-          ..where((item) => item.uuid.isIn(productIds))).get();
+            ..where((item) => item.uuid.isIn(productIds)))
+          .get();
 
       final cards = await (select(paymentCards)
-        ..where((item) => item.userId.equals(user.uuid))
-      ).get();
+            ..where((item) => item.userId.equals(user.uuid)))
+          .get();
 
       return User.fromDB(user, carts: product, cards: cards);
-
     } catch (e) {
       return null;
     }
   }
 
   Future<User?> updateUserDetails(String id, UsersCompanion user) async {
-      return transaction(() async {
-        await (update(users)..where((t) => t.uuid.equals(id))).write(
-          user
-        );
-        return await findUserById(id);
-      });
+    return transaction(() async {
+      await (update(users)..where((t) => t.uuid.equals(id))).write(user);
+      return await findUserById(id);
+    });
   }
-
 }

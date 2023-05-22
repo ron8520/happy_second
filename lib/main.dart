@@ -103,6 +103,8 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> fetchAllProducts() async {
     final search = Provider.of<SearchModel>(context, listen: false);
+    final app = Provider.of<AppModel>(context, listen: false);
+    await app.fetchProducts(context);
     await search.fetchAllProducts(context);
   }
 
