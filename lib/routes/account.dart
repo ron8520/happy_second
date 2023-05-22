@@ -7,7 +7,7 @@ import '../states/app.dart';
 import '../utils/hexColor.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+  const AccountPage({Key? key}) : super(key: key);
 
   @override
   State<AccountPage> createState() => _AccountPageState();
@@ -22,18 +22,22 @@ class _AccountPageState extends State<AccountPage> {
   @override
   Widget build(BuildContext context) {
     final app = Provider.of<AppModel>(context, listen: true);
-    final user = Provider.of<AppModel>(context, listen: true).currentUser!;
+    final user = app.currentUser;
 
     final listItem = <Widget>[
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Container(
-          height: 10,
-          width: 50,
-          decoration: BoxDecoration(
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            height: 10,
+            width: 50,
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20.0),
-              color: HexColor.fromHex("#5E7737")),
-        )
-      ]),
+              color: HexColor.fromHex("#5E7737"),
+            ),
+          ),
+        ],
+      ),
       const SizedBox(height: 10),
       Card(
         child: ListTile(
@@ -41,8 +45,9 @@ class _AccountPageState extends State<AccountPage> {
           title: Text(
             "Personal Details",
             style: TextStyle(
-                color: HexColor.fromHex("#5E7737"),
-                fontWeight: FontWeight.bold),
+              color: HexColor.fromHex("#5E7737"),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           onTap: () {
             Navigator.pushNamed(context, '/personalDetail');
@@ -56,113 +61,131 @@ class _AccountPageState extends State<AccountPage> {
           title: Text(
             "Become Sellers",
             style: TextStyle(
-                color: HexColor.fromHex("#5E7737"),
-                fontWeight: FontWeight.bold),
+              color: HexColor.fromHex("#5E7737"),
+              fontWeight: FontWeight.bold,
+            ),
           ),
           onTap: () {
-            user.usertype != UserType.seller
-                ? Navigator.pushNamed(context, '/becomeSeller')
-                : Navigator.pushNamed(context, '/uploadItem');
+            if (user?.usertype != UserType.seller) {
+              Navigator.pushNamed(context, '/becomeSeller');
+            } else {
+              Navigator.pushNamed(context, '/uploadItem');
+            }
           },
         ),
       ),
       const SizedBox(height: 4),
-      user.usertype == UserType.seller
-          ? Card(
-              child: ListTile(
-                leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
-                title: Text(
-                  "Upload Item",
-                  style: TextStyle(
-                      color: HexColor.fromHex("#5E7737"),
-                      fontWeight: FontWeight.bold),
-                ),
-                onTap: () {
-                  Navigator.pushNamed(context, '/uploadItem');
-                },
+      if (user?.usertype == UserType.seller)
+        Card(
+          child: ListTile(
+            leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
+            title: Text(
+              "Upload Item",
+              style: TextStyle(
+                color: HexColor.fromHex("#5E7737"),
+                fontWeight: FontWeight.bold,
               ),
-            )
-          : const SizedBox.shrink(),
+            ),
+            onTap: () {
+              Navigator.pushNamed(context, '/uploadItem');
+            },
+          ),
+        ),
       const SizedBox(height: 4),
       Card(
-          child: ListTile(
-        leading: Icon(Icons.history, color: HexColor.fromHex("#5E7737")),
-        title: Text(
-          "My Order",
-          style: TextStyle(
-              color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
+        child: ListTile(
+          leading: Icon(Icons.history, color: HexColor.fromHex("#5E7737")),
+          title: Text(
+            "My Order",
+            style: TextStyle(
+              color: HexColor.fromHex("#5E7737"),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/myorders');
+          },
         ),
-        onTap: () {
-          Navigator.pushNamed(context, '/myorders');
-        },
-      )),
+      ),
       const SizedBox(height: 4),
       Card(
-          child: ListTile(
-        leading:
-            Icon(Icons.credit_card_sharp, color: HexColor.fromHex("#5E7737")),
-        title: Text(
-          "My Cards",
-          style: TextStyle(
-              color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
+        child: ListTile(
+          leading: Icon(Icons.credit_card_sharp, color: HexColor.fromHex("#5E7737")),
+          title: Text(
+            "My Cards",
+            style: TextStyle(
+              color: HexColor.fromHex("#5E7737"),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/mycards');
+          },
         ),
-        onTap: () {
-          Navigator.pushNamed(context, '/mycards');
-        },
-      )),
+      ),
       const SizedBox(height: 4),
       Card(
-          child: ListTile(
-        leading: Icon(Icons.logout, color: HexColor.fromHex("#5E7737")),
-        title: Text(
-          "Log out",
-          style: TextStyle(
-              color: HexColor.fromHex("#5E7737"), fontWeight: FontWeight.bold),
+        child: ListTile(
+          leading: Icon(Icons.logout, color: HexColor.fromHex("#5E7737")),
+          title: Text(
+            "Log out",
+            style: TextStyle(
+              color: HexColor.fromHex("#5E7737"),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () {
+            SharedPreferencesUtil.preferences.remove("userId");
+            app.currentUser = null;
+            Navigator.pushReplacementNamed(context, "/");
+          },
         ),
-        onTap: () {
-          SharedPreferencesUtil.preferences.remove("userId");
-          app.currentUser = null;
-          Navigator.pushReplacementNamed(context, "/");
-        },
-      ))
+      ),
     ];
     return Column(
       children: [
         const Center(
-            child: CircleAvatar(
-          backgroundImage: AssetImage('lib/assets/wangzainiunai.jpeg'),
-          radius: 80, // set the radius as needed
-        )),
+          child: CircleAvatar(
+            backgroundImage: AssetImage('lib/assets/wangzainiunai.jpeg'),
+            radius: 80, // set the radius as needed
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
           child: Center(
-              child: Text(
-            user.username,
-            style: TextStyle(
+            child: Text(
+              user?.username ?? '',
+              style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
-                color: HexColor.fromHex("#5E7737")), // set the radius as needed
-          )),
+                color: HexColor.fromHex("#5E7737"),
+              ),
+            ),
+          ),
         ),
         Padding(
-          padding: EdgeInsets.fromLTRB(0, 2, 0, 20),
+          padding: const EdgeInsets.fromLTRB(0, 2, 0, 20),
           child: Center(
-              child: Text(
-            user.emailAddress,
-            style: TextStyle(
+            child: Text(
+              user?.emailAddress ?? '',
+              style: TextStyle(
                 fontSize: 16.0,
-                color: HexColor.fromHex("#5E7737")), // set the radius as needed
-          )),
+                color: HexColor.fromHex("#5E7737"),
+              ),
+            ),
+          ),
         ),
         Expanded(
-            child: Container(
-          color: Colors.grey[300],
-          child: Padding(
-              padding: EdgeInsets.all(30),
+          child: Container(
+            color: Colors.grey[300],
+            child: Padding(
+              padding: const EdgeInsets.all(30),
               child: ListView(
                 children: listItem,
-              )),
-        ))
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
