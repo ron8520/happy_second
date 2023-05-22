@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:happy_second/model/order.dart';
 
 import '../../utils/hexColor.dart';
 
@@ -16,9 +17,9 @@ class _HistoryCardState extends State<HistoryCard> {
 
   @override
   void initState() {
-    if (widget.order.status == "Processing") {
+    if (widget.order.status == OrderStatus.processing) {
       statusColor = HexColor.fromHex("#5E7737");
-    } else if (widget.order.status == "Delivered") {
+    } else if (widget.order.status == OrderStatus.delivered) {
       statusColor = HexColor.fromHex("#F38127");
     }
     super.initState();
@@ -40,12 +41,17 @@ class _HistoryCardState extends State<HistoryCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Order Id: ${widget.order.id}",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text("Items 4"),
+                  Flexible(
+                    child: Text(
+                      overflow: TextOverflow.ellipsis,
+                      "Order Id: ${widget.order.uuid}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text("Items ${widget.order.items.length}"),
                 ],
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.0),
@@ -54,7 +60,10 @@ class _HistoryCardState extends State<HistoryCard> {
                 height: 30,
                 child: Align(
                   alignment: Alignment.center,
-                  child: Text('${widget.order.status}',
+                  child: Text(
+                      widget.order.status
+                          .toString()
+                          .replaceAll("OrderStatus.", ""),
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold)),
                 ),

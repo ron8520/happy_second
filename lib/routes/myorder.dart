@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:happy_second/componets/history/historyCard.dart';
 import 'package:happy_second/routes/orderDetail.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
+import '../database/db.dart';
+import '../model/order.dart';
+import '../model/product.dart';
 import '../utils/hexColor.dart';
 
 class OrderHistoryPage extends StatefulWidget {
@@ -10,11 +15,59 @@ class OrderHistoryPage extends StatefulWidget {
 }
 
 class _OrderHistoryPageState extends State<OrderHistoryPage> {
-  List<Order> _orders = [
-    Order(id: '#123465723212311231', date: '2023-05-10 at 17:30', total: 25.99, status: "Processing"),
-    Order(id: '#123465723212311231', date: '2023-05-08 at 17:30', total: 19.99, status: "Pending"),
-    Order(id: '#123465723212311231', date: '2023-05-05 at 17:30', total: 42.99, status: "Delivered"),
-  ];
+  List<Order> orders = [];
+
+  @override
+  void initState() {
+    super.initState();
+    initOrders();
+  }
+
+  Future<List<Product>?> fetchProducts() async {
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    final productList = await db.findProducts();
+    return productList;
+  }
+
+  Future<void> initOrders() async {
+    final productList = await fetchProducts();
+    setState(() {
+      orders = [
+        Order(
+          uuid: const Uuid().v4(),
+          date: DateTime.now().toString(),
+          total: 250.00,
+          status: OrderStatus.pending,
+          items: productList
+                  ?.where((item) => item.category == Category.clothes)
+                  .toList() ??
+              [],
+        ),
+        Order(
+          uuid: const Uuid().v4(),
+          date: DateTime.now().toString(),
+          total: 150.00,
+          status: OrderStatus.processing,
+          items: productList
+                  ?.where((item) => item.category == Category.toys)
+                  .toList() ??
+              [],
+        ),
+        Order(
+          uuid: const Uuid().v4(),
+          date: DateTime.now().toString(),
+          total: 250.00,
+          status: OrderStatus.delivered,
+          items: productList
+                  ?.where((item) =>
+                      item.category == Category.toys &&
+                      item.subCategory == SubCategory.plastic)
+                  .toList() ??
+              [],
+        ),
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +87,15 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
         body: Padding(
           padding: const EdgeInsets.all(20.0),
           child: ListView.builder(
-            itemCount: _orders.length,
+            itemCount: orders.length,
             itemBuilder: (context, index) {
-              Order order = _orders[index];
+              Order order = orders[index];
               return InkWell(
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => OrderDetailPage(order: order)),
+                    MaterialPageRoute(
+                        builder: (context) => OrderDetailPage(order: order, index: index,)),
                   );
                 },
                 child: HistoryCard(order: order),
@@ -50,13 +104,4 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
           ),
         ));
   }
-}
-
-class Order {
-  final String id;
-  final String date;
-  final double total;
-  final String status;
-
-  Order({required this.status, required this.id, required this.date, required this.total});
 }
