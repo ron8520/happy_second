@@ -11,6 +11,7 @@ class User {
   final String username;
   final String emailAddress;
   final String password;
+  String? number;
   UserType usertype;
   List<PaymentCard>? cards;
   List<Product>? cart;
@@ -21,6 +22,7 @@ class User {
     required this.password,
     required this.usertype,
     this.cart,
+    this.number,
     this.cards});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -34,6 +36,7 @@ class User {
         emailAddress: Value(emailAddress),
         password: Value(password),
         userType: Value(usertype),
+        number: Value(number)
       );
 
   factory User.fromDB(UsersDB user,
@@ -47,7 +50,8 @@ class User {
           cart: carts != null ? carts.map((i) => Product.fromDB(i)).toList()
               : [],
           cards: cards != null ? cards.map((i) => PaymentCard.fromDB(i))
-              .toList() : []
+              .toList() : [],
+          number: user.number
       );
 }
 

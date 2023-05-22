@@ -40,6 +40,11 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UsersDB> {
   late final GeneratedColumn<String> password = GeneratedColumn<String>(
       'password', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
+  @override
+  late final GeneratedColumn<String> number = GeneratedColumn<String>(
+      'number', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _userTypeMeta =
       const VerificationMeta('userType');
   @override
@@ -49,7 +54,7 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UsersDB> {
           .withConverter<UserType>($UsersTable.$converteruserType);
   @override
   List<GeneratedColumn> get $columns =>
-      [uuid, username, emailAddress, password, userType];
+      [uuid, username, emailAddress, password, number, userType];
   @override
   String get aliasedName => _alias ?? 'users';
   @override
@@ -85,6 +90,10 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UsersDB> {
     } else if (isInserting) {
       context.missing(_passwordMeta);
     }
+    if (data.containsKey('number')) {
+      context.handle(_numberMeta,
+          number.isAcceptableOrUnknown(data['number']!, _numberMeta));
+    }
     context.handle(_userTypeMeta, const VerificationResult.success());
     return context;
   }
@@ -103,6 +112,8 @@ class $UsersTable extends Users with TableInfo<$UsersTable, UsersDB> {
           .read(DriftSqlType.string, data['${effectivePrefix}email_address'])!,
       password: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}password'])!,
+      number: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}number']),
       userType: $UsersTable.$converteruserType.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}user_type'])!),
@@ -123,12 +134,14 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
   final String username;
   final String emailAddress;
   final String password;
+  final String? number;
   final UserType userType;
   const UsersDB(
       {required this.uuid,
       required this.username,
       required this.emailAddress,
       required this.password,
+      this.number,
       required this.userType});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -137,6 +150,9 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
     map['username'] = Variable<String>(username);
     map['email_address'] = Variable<String>(emailAddress);
     map['password'] = Variable<String>(password);
+    if (!nullToAbsent || number != null) {
+      map['number'] = Variable<String>(number);
+    }
     {
       final converter = $UsersTable.$converteruserType;
       map['user_type'] = Variable<int>(converter.toSql(userType));
@@ -150,6 +166,8 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
       username: Value(username),
       emailAddress: Value(emailAddress),
       password: Value(password),
+      number:
+          number == null && nullToAbsent ? const Value.absent() : Value(number),
       userType: Value(userType),
     );
   }
@@ -162,6 +180,7 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
       username: serializer.fromJson<String>(json['username']),
       emailAddress: serializer.fromJson<String>(json['emailAddress']),
       password: serializer.fromJson<String>(json['password']),
+      number: serializer.fromJson<String?>(json['number']),
       userType: $UsersTable.$converteruserType
           .fromJson(serializer.fromJson<int>(json['userType'])),
     );
@@ -174,6 +193,7 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
       'username': serializer.toJson<String>(username),
       'emailAddress': serializer.toJson<String>(emailAddress),
       'password': serializer.toJson<String>(password),
+      'number': serializer.toJson<String?>(number),
       'userType': serializer
           .toJson<int>($UsersTable.$converteruserType.toJson(userType)),
     };
@@ -184,12 +204,14 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
           String? username,
           String? emailAddress,
           String? password,
+          Value<String?> number = const Value.absent(),
           UserType? userType}) =>
       UsersDB(
         uuid: uuid ?? this.uuid,
         username: username ?? this.username,
         emailAddress: emailAddress ?? this.emailAddress,
         password: password ?? this.password,
+        number: number.present ? number.value : this.number,
         userType: userType ?? this.userType,
       );
   @override
@@ -199,6 +221,7 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
           ..write('username: $username, ')
           ..write('emailAddress: $emailAddress, ')
           ..write('password: $password, ')
+          ..write('number: $number, ')
           ..write('userType: $userType')
           ..write(')'))
         .toString();
@@ -206,7 +229,7 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
 
   @override
   int get hashCode =>
-      Object.hash(uuid, username, emailAddress, password, userType);
+      Object.hash(uuid, username, emailAddress, password, number, userType);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -215,6 +238,7 @@ class UsersDB extends DataClass implements Insertable<UsersDB> {
           other.username == this.username &&
           other.emailAddress == this.emailAddress &&
           other.password == this.password &&
+          other.number == this.number &&
           other.userType == this.userType);
 }
 
@@ -223,6 +247,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
   final Value<String> username;
   final Value<String> emailAddress;
   final Value<String> password;
+  final Value<String?> number;
   final Value<UserType> userType;
   final Value<int> rowid;
   const UsersCompanion({
@@ -230,6 +255,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
     this.username = const Value.absent(),
     this.emailAddress = const Value.absent(),
     this.password = const Value.absent(),
+    this.number = const Value.absent(),
     this.userType = const Value.absent(),
     this.rowid = const Value.absent(),
   });
@@ -238,6 +264,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
     required String username,
     required String emailAddress,
     required String password,
+    this.number = const Value.absent(),
     required UserType userType,
     this.rowid = const Value.absent(),
   })  : uuid = Value(uuid),
@@ -250,6 +277,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
     Expression<String>? username,
     Expression<String>? emailAddress,
     Expression<String>? password,
+    Expression<String>? number,
     Expression<int>? userType,
     Expression<int>? rowid,
   }) {
@@ -258,6 +286,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
       if (username != null) 'username': username,
       if (emailAddress != null) 'email_address': emailAddress,
       if (password != null) 'password': password,
+      if (number != null) 'number': number,
       if (userType != null) 'user_type': userType,
       if (rowid != null) 'rowid': rowid,
     });
@@ -268,6 +297,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
       Value<String>? username,
       Value<String>? emailAddress,
       Value<String>? password,
+      Value<String?>? number,
       Value<UserType>? userType,
       Value<int>? rowid}) {
     return UsersCompanion(
@@ -275,6 +305,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
       username: username ?? this.username,
       emailAddress: emailAddress ?? this.emailAddress,
       password: password ?? this.password,
+      number: number ?? this.number,
       userType: userType ?? this.userType,
       rowid: rowid ?? this.rowid,
     );
@@ -295,6 +326,9 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
     if (password.present) {
       map['password'] = Variable<String>(password.value);
     }
+    if (number.present) {
+      map['number'] = Variable<String>(number.value);
+    }
     if (userType.present) {
       final converter = $UsersTable.$converteruserType;
       map['user_type'] = Variable<int>(converter.toSql(userType.value));
@@ -312,6 +346,7 @@ class UsersCompanion extends UpdateCompanion<UsersDB> {
           ..write('username: $username, ')
           ..write('emailAddress: $emailAddress, ')
           ..write('password: $password, ')
+          ..write('number: $number, ')
           ..write('userType: $userType, ')
           ..write('rowid: $rowid')
           ..write(')'))

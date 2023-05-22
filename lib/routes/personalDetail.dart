@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
+import '../states/app.dart';
 import '../utils/hexColor.dart';
 
 class PersonalDetailPage extends StatefulWidget {
-  final String name;
-  final String email;
-  final String contactNumber;
-  final String address;
-  final String password;
-
-  PersonalDetailPage({  
-    required this.name,
-    required this.email,
-    required this.contactNumber,
-    required this.address,
-    required this.password,
-  });
+  const PersonalDetailPage({super.key});
 
   @override
   _PersonalDetailPageState createState() => _PersonalDetailPageState();
@@ -24,19 +15,21 @@ class _PersonalDetailPageState extends State<PersonalDetailPage> {
   late TextEditingController nameController;
   late TextEditingController emailController;
   late TextEditingController contactNumberController;
-  late TextEditingController addressController;
   late TextEditingController passwordController;
 
-  String selectedAvatar = 'lib/assets/wangzainiunai.jpeg'; // Default avatar image
+  String selectedAvatar =
+      'lib/assets/wangzainiunai.jpeg'; // Default avatar image
 
   @override
   void initState() {
     super.initState();
-    nameController = TextEditingController(text: widget.name);
-    emailController = TextEditingController(text: widget.email);
-    contactNumberController = TextEditingController(text: widget.contactNumber);
-    addressController = TextEditingController(text: widget.address);
-    passwordController = TextEditingController(text: widget.password);
+    final app = Provider.of<AppModel>(context, listen: false);
+    nameController = TextEditingController(text: app.currentUser!.username);
+    emailController =
+        TextEditingController(text: app.currentUser!.emailAddress);
+    contactNumberController =
+        TextEditingController(text: app.currentUser!.number);
+    passwordController = TextEditingController(text: app.currentUser!.password);
   }
 
   @override
@@ -44,24 +37,23 @@ class _PersonalDetailPageState extends State<PersonalDetailPage> {
     nameController.dispose();
     emailController.dispose();
     contactNumberController.dispose();
-    addressController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
-  void _saveChanges() {
+  void _saveChanges() async {
     // Handle saving changes to a database or performing any necessary actions
     // with the updated information.
+    final app = Provider.of<AppModel>(context, listen: false);
     String updatedName = nameController.text;
-    String updatedEmail = emailController.text;
-    String updatedContactNumber = contactNumberController.text;
-    String updatedAddress = addressController.text;
+    String updatedNumber = contactNumberController.text;
     String updatedPassword = passwordController.text;
-
-    // Perform necessary operations with the updated information.
-    // For example, you can send it to an API or update a local database.
-    final snackBar = SnackBar(content: Text('Changes saved!'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    await app
+        .updateUserDetails(context, updatedName, updatedNumber, updatedPassword)
+        .then((value) => {
+              EasyLoading.showSuccess("Update Successful"),
+              Navigator.pop(context)
+            });
   }
 
   void _changeAvatar() async {
@@ -99,13 +91,13 @@ class _PersonalDetailPageState extends State<PersonalDetailPage> {
         backgroundColor: HexColor.fromHex("#5E7737"),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: _changeAvatar,
-              child: Container(
+              child: SizedBox(
                 width: 120,
                 height: 120,
                 child: CircleAvatar(
@@ -114,71 +106,81 @@ class _PersonalDetailPageState extends State<PersonalDetailPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 10),
             TextFormField(
               controller: nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
+              decoration: const InputDecoration(
+                labelText: 'Username',
+                focusColor: Color.fromRGBO(94, 119, 55, 1),
+                fillColor: Color.fromRGBO(94, 119, 55, 1),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide:
+                        BorderSide(color: Color.fromRGBO(94, 119, 55, 1))),
                 labelStyle: TextStyle(
-                  fontSize: 25,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Color.fromRGBO(94, 119, 55, 1),
                 ),
               ),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 10),
             TextFormField(
+              enabled: false,
               controller: emailController,
-              decoration: InputDecoration(labelText: 'Email address',
+              decoration: const InputDecoration(
+                  labelText: 'Email address',
                   labelStyle: TextStyle(
-                    fontSize: 25,
+                    fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(94,119,55,1), // Replace 'FF0000FF' with your desired RGB value in hex
+                    color: Color.fromRGBO(94, 119, 55,
+                        1), // Replace 'FF0000FF' with your desired RGB value in hex
                   )),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 10),
             TextFormField(
+              keyboardType: TextInputType.number,
               controller: contactNumberController,
-              decoration: InputDecoration(labelText: 'Contact number',
+              decoration: const InputDecoration(
+                  labelText: 'Contact number',
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(94, 119, 55, 1))),
                   labelStyle: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(94,119,55,1), // Replace 'FF0000FF' with your desired RGB value in hex
+                    color: Color.fromRGBO(94, 119, 55,
+                        1), // Replace 'FF0000FF' with your desired RGB value in hex
                   )),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 10),
             TextFormField(
-              controller: addressController,
-              decoration: InputDecoration(labelText: 'Address',
-                  labelStyle: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(94,119,55,1), // Replace 'FF0000FF' with your desired RGB value in hex
-                  )),
-            ),
-            SizedBox(height: 8),
-            TextFormField(
+              obscureText: true,
               controller: passwordController,
-              decoration: InputDecoration(labelText: 'Password',
+              decoration: const InputDecoration(
+                  labelText: 'Password',
+                  focusedBorder: UnderlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Color.fromRGBO(94, 119, 55, 1))),
                   labelStyle: TextStyle(
                     fontSize: 25,
                     fontWeight: FontWeight.bold,
-                    color: Color.fromRGBO(94,119,55,1), // Replace 'FF0000FF' with your desired RGB value in hex
+                    color: Color.fromRGBO(94, 119, 55,
+                        1), // Replace 'FF0000FF' with your desired RGB value in hex
                   )),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveChanges,
               style: ElevatedButton.styleFrom(
                 backgroundColor: HexColor.fromHex("#5E7737"),
-                fixedSize: const Size(400, 30),
+                fixedSize: const Size(400, 40),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(
                       20), // Change the value to adjust the radius
                 ),
               ),
               child: const Text('Save Changes',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             ),
           ],
         ),

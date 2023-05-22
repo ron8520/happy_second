@@ -65,24 +65,23 @@ class AppModel extends ChangeNotifier {
     currentUser!.cards!.add(newCard);
 
     await db.createNewCard(PaymentCardsCompanion(
-      uuid: Value(const Uuid().v4()),
-      userId: Value(currentUser!.uuid),
-      expiryDate: Value(newCard.expiryDate),
-      cvv: Value(newCard.cvv),
-      cardNumber: Value(newCard.number),
-      cardHolder: Value(newCard.cardHolder)
-    ));
+        uuid: Value(const Uuid().v4()),
+        userId: Value(currentUser!.uuid),
+        expiryDate: Value(newCard.expiryDate),
+        cvv: Value(newCard.cvv),
+        cardNumber: Value(newCard.number),
+        cardHolder: Value(newCard.cardHolder)));
     EasyLoading.showSuccess("Add new Card Successfully!");
     notifyListeners();
   }
 
   Future<void> removeCard(BuildContext context) async {
-    if(currentUser != null) {
+    if (currentUser != null) {
       final db = Provider.of<AppDatabase>(context, listen: false);
       for (PaymentCard card in currentUser!.cards!) {
-          if(card.selected){
-            await db.deletePaymentCard(currentUser!.uuid, card.uuid);
-          }
+        if (card.selected) {
+          await db.deletePaymentCard(currentUser!.uuid, card.uuid);
+        }
       }
       currentUser!.cards!.removeWhere((card) => card.selected);
       EasyLoading.showSuccess("Remove card Successfully!");
@@ -90,8 +89,41 @@ class AppModel extends ChangeNotifier {
   }
 
   Future<void> checkout(BuildContext context) async {
-    if(currentUser != null){
+    if (currentUser != null) {
       await removeAllCartItems(context);
     }
+  }
+
+  Future<void> updateUserDetails(BuildContext context, String updateName,
+      String updatedNumber, String updatePassword) async {
+    if (currentUser == null) {
+      return;
+    }
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    currentUser = await db.updateUserDetails(currentUser!.uuid, UsersCompanion(
+      uuid: Value(currentUser!.uuid),
+      emailAddress: Value(currentUser!.emailAddress),
+      number: Value(updatedNumber),
+      username: Value(updateName),
+      password: Value(updatePassword),
+      userType: Value(currentUser!.usertype)
+    ));
+    notifyListeners();
+  }
+
+  Future<void> updateUserType(BuildContext context) async {
+    if(currentUser == null){
+      return;
+    }
+    final db = Provider.of<AppDatabase>(context, listen: false);
+    currentUser = await db.updateUserDetails(currentUser!.uuid, UsersCompanion(
+        uuid: Value(currentUser!.uuid),
+        emailAddress: Value(currentUser!.emailAddress),
+        number: Value(currentUser!.number),
+        username: Value(currentUser!.username),
+        password: Value(currentUser!.password),
+        userType: const Value(UserType.seller)
+    ));
+    notifyListeners();
   }
 }

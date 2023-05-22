@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:provider/provider.dart';
 
+import '../states/app.dart';
 import '../utils/hexColor.dart';
 
 class SubscribePage extends StatefulWidget {
@@ -23,6 +25,7 @@ class _SubscribePageState extends State<SubscribePage> {
 
   @override
   Widget build(BuildContext context) {
+    final app = Provider.of<AppModel>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Subscribe',
@@ -186,10 +189,11 @@ class _SubscribePageState extends State<SubscribePage> {
               ],
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 // Handle checkout logic here
                 if (_isChecked) {
-                  Navigator.pushNamed(context, '/paymentSuccess');
+                  await app.updateUserType(context).then((value) =>
+                      Navigator.pushNamed(context, '/paymentSuccess'));
                 } else {
                   EasyLoading.showInfo("You have to view our policy first");
                 }

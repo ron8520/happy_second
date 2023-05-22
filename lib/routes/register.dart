@@ -41,7 +41,8 @@ class _RegisterPageState extends State<RegisterPage> {
             password: _passwordController.text,
             usertype: UserType.normal,
             cart: [],
-            cards: []
+            cards: [],
+            number: ""
         );
 
         await db.createUser(newUser.toUsersCompanion()).then((value) =>

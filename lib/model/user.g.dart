@@ -15,6 +15,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       cart: (json['cart'] as List<dynamic>?)
           ?.map((e) => Product.fromJson(e as Map<String, dynamic>))
           .toList(),
+      number: json['number'] as String?,
       cards: (json['cards'] as List<dynamic>?)
           ?.map((e) => PaymentCard.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'username': instance.username,
       'emailAddress': instance.emailAddress,
       'password': instance.password,
+      'number': instance.number,
       'usertype': _$UserTypeEnumMap[instance.usertype]!,
       'cards': instance.cards,
       'cart': instance.cart,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:happy_second/model/user.dart';
 import 'package:happy_second/utils/storage/sharedPreferences_util.dart';
+import 'package:provider/provider.dart';
 
+import '../states/app.dart';
 import '../utils/hexColor.dart';
 
 class AccountPage extends StatefulWidget {
@@ -18,6 +21,9 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final app = Provider.of<AppModel>(context, listen: true);
+    final user = Provider.of<AppModel>(context, listen: true).currentUser!;
+
     final listItem = <Widget>[
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Container(
@@ -28,7 +34,7 @@ class _AccountPageState extends State<AccountPage> {
               color: HexColor.fromHex("#5E7737")),
         )
       ]),
-      SizedBox(height: 10),
+      const SizedBox(height: 10),
       Card(
         child: ListTile(
           leading: Icon(Icons.person, color: HexColor.fromHex("#5E7737")),
@@ -43,7 +49,7 @@ class _AccountPageState extends State<AccountPage> {
           },
         ),
       ),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
       Card(
         child: ListTile(
           leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
@@ -54,26 +60,30 @@ class _AccountPageState extends State<AccountPage> {
                 fontWeight: FontWeight.bold),
           ),
           onTap: () {
-            Navigator.pushNamed(context, '/becomeSeller');
+            user.usertype != UserType.seller
+                ? Navigator.pushNamed(context, '/becomeSeller')
+                : Navigator.pushNamed(context, '/uploadItem');
           },
         ),
       ),
-      SizedBox(height: 4),
-      Card(
-        child: ListTile(
-          leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
-          title: Text(
-            "Upload Item",
-            style: TextStyle(
-                color: HexColor.fromHex("#5E7737"),
-                fontWeight: FontWeight.bold),
-          ),
-          onTap: () {
-            Navigator.pushNamed(context, '/uploadItem');
-          },
-        ),
-      ),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
+      user.usertype == UserType.seller
+          ? Card(
+              child: ListTile(
+                leading: Icon(Icons.upload, color: HexColor.fromHex("#5E7737")),
+                title: Text(
+                  "Upload Item",
+                  style: TextStyle(
+                      color: HexColor.fromHex("#5E7737"),
+                      fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/uploadItem');
+                },
+              ),
+            )
+          : const SizedBox.shrink(),
+      const SizedBox(height: 4),
       Card(
           child: ListTile(
         leading: Icon(Icons.history, color: HexColor.fromHex("#5E7737")),
@@ -86,7 +96,7 @@ class _AccountPageState extends State<AccountPage> {
           Navigator.pushNamed(context, '/myorders');
         },
       )),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
       Card(
           child: ListTile(
         leading:
@@ -100,7 +110,7 @@ class _AccountPageState extends State<AccountPage> {
           Navigator.pushNamed(context, '/mycards');
         },
       )),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
       Card(
           child: ListTile(
         leading: Icon(Icons.logout, color: HexColor.fromHex("#5E7737")),
@@ -111,7 +121,8 @@ class _AccountPageState extends State<AccountPage> {
         ),
         onTap: () {
           SharedPreferencesUtil.preferences.remove("userId");
-          Navigator.pushNamed(context, "/");
+          app.currentUser = null;
+          Navigator.pushReplacementNamed(context, "/");
         },
       ))
     ];
@@ -126,7 +137,7 @@ class _AccountPageState extends State<AccountPage> {
           padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
           child: Center(
               child: Text(
-            "Wangzainiunai",
+            user.username,
             style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,
@@ -137,7 +148,7 @@ class _AccountPageState extends State<AccountPage> {
           padding: EdgeInsets.fromLTRB(0, 2, 0, 20),
           child: Center(
               child: Text(
-            "wangwang@gamil.com",
+            user.emailAddress,
             style: TextStyle(
                 fontSize: 16.0,
                 color: HexColor.fromHex("#5E7737")), // set the radius as needed

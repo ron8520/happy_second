@@ -54,12 +54,7 @@ class MyApp extends StatelessWidget {
               '/uploadItem': (context) => UploadProductPage(),
               '/myorders': (context) => OrderHistoryPage(),
               '/mycards': (context) => CardPage(),
-              '/personalDetail': (context) => PersonalDetailPage(
-                  name: "name",
-                  email: "email",
-                  contactNumber: "contactNumber",
-                  address: "address",
-                  password: "password")
+              '/personalDetail': (context) => PersonalDetailPage()
             },
             builder: EasyLoading.init(),
             theme: ThemeData(
@@ -147,14 +142,18 @@ class _MainPageState extends State<MainPage> {
     ];
 
     final _action = <Widget>[
-      const Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-          child: CircleAvatar(
+       Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+          child: user != null ?
+              const CircleAvatar(
+                backgroundImage: AssetImage('lib/assets/wangzainiunai.jpeg'),
+              ) :
+          const CircleAvatar(
             backgroundColor: Colors.black12,
             child: Icon(Icons.person, color: Colors.white),
           )),
       const SizedBox(),
-      user != null && !user.cart!.isEmpty
+      user != null && user.cart!.isNotEmpty
           ? Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
               child: IconButton(

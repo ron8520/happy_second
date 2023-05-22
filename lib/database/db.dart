@@ -24,6 +24,8 @@ class Users extends Table {
 
   TextColumn get password => text()();
 
+  TextColumn get number => text().nullable()();
+
   IntColumn get userType => intEnum<UserType>()();
 
   @override
@@ -300,6 +302,15 @@ class AppDatabase extends _$AppDatabase {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<User?> updateUserDetails(String id, UsersCompanion user) async {
+      return transaction(() async {
+        await (update(users)..where((t) => t.uuid.equals(id))).write(
+          user
+        );
+        return await findUserById(id);
+      });
   }
 
 }
